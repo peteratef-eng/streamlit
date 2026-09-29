@@ -68,10 +68,6 @@ def _sidebar_page_link(page: dict[str, object], active: bool, group: str) -> Non
                 background: rgba(37, 99, 235, .09) !important;
                 font-weight: 700 !important;
             }}
-            .st-key-{key} [data-testid="stPageLink"] a::before {{
-                background: #2563eb !important;
-                box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;
-            }}
             </style>
             """,
             unsafe_allow_html=True,
@@ -110,6 +106,27 @@ def sidebar_brand() -> None:
     )
 
 
+SIDEBAR_PROJECT_ICON_PATHS = {
+    "pipeline": (
+        '<path d="M4 6h5a2 2 0 0 1 2 2v8a2 2 0 0 0 2 2h7"></path>'
+        '<circle cx="4" cy="6" r="1.6"></circle>'
+        '<circle cx="20" cy="18" r="1.6"></circle>'
+        '<circle cx="11" cy="12" r="1.6"></circle>'
+    ),
+    "chart": (
+        '<path d="M4 19h16"></path>'
+        '<rect x="6" y="12" width="3" height="7" rx=".5"></rect>'
+        '<rect x="11" y="8" width="3" height="11" rx=".5"></rect>'
+        '<rect x="16" y="4" width="3" height="15" rx=".5"></rect>'
+    ),
+}
+
+
+def _sidebar_project_icon(icon: str) -> str:
+    paths = SIDEBAR_PROJECT_ICON_PATHS.get(icon, SIDEBAR_PROJECT_ICON_PATHS["chart"])
+    return f'<span class="sidebar-project-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">{paths}</svg></span>'
+
+
 def sidebar_projects(active_route: str | None = None) -> None:
     current_path = _current_path(active_route)
     project_routes = {
@@ -119,43 +136,22 @@ def sidebar_projects(active_route: str | None = None) -> None:
     }
     projects_open = current_path in project_routes
     st.sidebar.markdown(
-        '<section class="sidebar-projects native-sidebar-projects">',
+        '<section class="sidebar-projects">',
         unsafe_allow_html=True,
     )
     with st.sidebar.expander("PROJECTS", expanded=projects_open):
         for project in SIDEBAR_PROJECTS:
-            project_open = any(page["route"] == current_path for page in project["pages"])
-            project_active_class = " is-active" if project_open else ""
             st.markdown(
-                '<div class="sidebar-project-expander'
-                f'{project_active_class}">'
-                '<div class="sidebar-project-summary sidebar-project-card">'
-                '<div class="sidebar-project-card-header">'
-                '<span class="sidebar-project-icon" aria-hidden="true">'
-                '<svg viewBox="0 0 24 24" focusable="false">'
-                '<path d="M6 7c0-1.7 12-1.7 12 0v10c0 1.7-12 1.7-12 0V7z"></path>'
-                '<path d="M6 7c0 1.7 12 1.7 12 0"></path>'
-                '<path d="M6 12c0 1.7 12 1.7 12 0"></path>'
-                '</svg>'
-                '</span>'
-                '<div class="sidebar-project-copy">'
+                '<div class="sidebar-project-header">'
+                f'{_sidebar_project_icon(project.get("icon", ""))}'
+                '<div class="sidebar-project-header-copy">'
                 f'<div class="sidebar-project-name">{html.escape(project["name"])}</div>'
                 f'<div class="sidebar-project-type">{html.escape(project["type"])}</div>'
-                '</div>'
-                '</div>'
-                '<div class="sidebar-project-mini-lineage" aria-hidden="true">'
-                '<span class="sidebar-mini-stage sidebar-mini-source"></span>'
-                '<span class="sidebar-mini-track"></span>'
-                '<span class="sidebar-mini-stage sidebar-mini-model"></span>'
-                '<span class="sidebar-mini-track"></span>'
-                '<span class="sidebar-mini-stage sidebar-mini-mart"></span>'
-                '<span class="sidebar-mini-packet"></span>'
-                '</div>'
                 '</div>'
                 '</div>',
                 unsafe_allow_html=True,
             )
-            st.markdown('<nav class="sidebar-project-links native-sidebar-links">', unsafe_allow_html=True)
+            st.markdown('<nav class="sidebar-project-links">', unsafe_allow_html=True)
             for page in project["pages"]:
                 page_active = page["route"] == current_path
                 _sidebar_page_link(page, page_active, "project")
@@ -168,7 +164,7 @@ def sidebar_portfolio(active_route: str | None = None) -> None:
     portfolio_routes = {link["route"] for link in SIDEBAR_PORTFOLIO_LINKS}
     portfolio_open = current_path in portfolio_routes
     st.sidebar.markdown(
-        '<section class="sidebar-portfolio native-sidebar-portfolio">',
+        '<section class="sidebar-portfolio">',
         unsafe_allow_html=True,
     )
     with st.sidebar.expander("PORTFOLIO", expanded=portfolio_open):

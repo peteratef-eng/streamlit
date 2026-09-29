@@ -17,7 +17,8 @@ PORTFOLIO_PAGES = [
 SIDEBAR_PROJECTS = [
     {
         "name": "Job Market Intelligence",
-        "type": "Data Engineering Project",
+        "type": "Data Engineering",
+        "icon": "pipeline",
         "pages": [
             {"label": "Overview", "path": "views/project_overview.py", "route": "/project_overview", "url_path": "project_overview"},
             {"label": "Market Dashboard", "path": "views/market_dashboard.py", "route": "/market_dashboard", "url_path": "market_dashboard"},
@@ -27,8 +28,10 @@ SIDEBAR_PROJECTS = [
     },
     {
         "name": "E-Commerce Sales Analysis",
-        "type": "Data Analysis Project",
+        "type": "Data Analysis",
+        "icon": "chart",
         "pages": [
+            {"label": "Overview", "path": "views/ecommerce_overview.py", "route": "/ecommerce_overview", "url_path": "ecommerce_overview"},
             {"label": "Dashboard", "path": "views/ecommerce_dashboard.py", "route": "/ecommerce_dashboard", "url_path": "ecommerce_dashboard"},
         ],
     },

@@ -305,13 +305,6 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             background: rgba(148, 163, 184, .28);
             margin: .75rem 0;
         }}
-        .sidebar-section-expander {{
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            box-sizing: border-box;
-            margin: 0;
-        }}
         .sidebar-portfolio {{
             width: 100%;
             max-width: 100%;
@@ -322,302 +315,59 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             max-width: 100%;
             margin: 0 0 .5rem;
         }}
-        .sidebar-projects-expander {{
-            width: 100%;
-            max-width: 100%;
-            margin: 0;
-        }}
-        .sidebar-section-toggle {{
-            width: 100%;
-            max-width: 100%;
+        .sidebar-project-header {{
+            display: flex;
+            align-items: center;
+            gap: .55rem;
             min-width: 0;
-            min-height: 44px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 10px 14px;
-            border: 0;
-            border-radius: 10px;
-            color: var(--text);
-            background: transparent;
-            font-family: inherit;
-            font-size: .75rem;
-            font-weight: 800;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            cursor: pointer;
-            list-style: none;
-            user-select: none;
-            transition:
-                background-color 180ms ease,
-                color 180ms ease;
+            padding: .3rem .2rem;
+            margin: .2rem 0 .15rem;
         }}
-        .sidebar-section-toggle::-webkit-details-marker,
-        .sidebar-project-summary::-webkit-details-marker {{
-            display: none;
-        }}
-        .sidebar-section-toggle::marker,
-        .sidebar-project-summary::marker {{
-            content: "";
-        }}
-        .sidebar-section-toggle:hover,
-        .sidebar-section-toggle:focus-visible {{
-            background: rgba(239, 246, 255, .72);
-            outline: none;
-        }}
-        .sidebar-section-toggle:focus-visible,
-        .sidebar-project-summary:focus-visible {{
-            box-shadow: 0 0 0 3px rgba(180, 83, 9, .16);
-        }}
-        .sidebar-expander-chevron,
-        .sidebar-project-chevron {{
-            width: 16px;
-            height: 16px;
-            flex: 0 0 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--data-blue);
-            transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-            transform-origin: center;
-        }}
-        .sidebar-expander-chevron svg,
-        .sidebar-project-chevron svg {{
-            width: 14px;
-            height: 14px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }}
-        .sidebar-section-expander[open] > .sidebar-section-toggle .sidebar-expander-chevron,
-        .sidebar-project-expander[open] > .sidebar-project-summary .sidebar-project-chevron {{
-            transform: rotate(180deg);
-        }}
-        .sidebar-section-content {{
-            display: grid;
-            grid-template-rows: 0fr;
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            opacity: 0;
-            transition:
-                grid-template-rows 220ms ease,
-                opacity 160ms ease;
-        }}
-        .sidebar-section-expander[open] > .sidebar-section-content {{
-            grid-template-rows: 1fr;
-            opacity: 1;
-        }}
-        .sidebar-section-content-inner {{
-            min-height: 0;
-            overflow: hidden;
-        }}
-        .sidebar-portfolio-content {{
-            margin-top: .5rem;
-        }}
-        .sidebar-projects-content {{
-            width: 100%;
-            max-width: 100%;
-            margin-top: .5rem;
-        }}
-        .sidebar-portfolio-links {{
-            display: flex;
-            flex-direction: column;
-            gap: .08rem;
-            padding: .35rem 0 .25rem .85rem;
-            border-left: 1px solid rgba(180, 83, 9, .20);
-        }}
-        .sidebar-portfolio-link {{
-            display: flex;
-            align-items: center;
-            min-height: 2.05rem;
-            padding: .38rem .5rem;
-            border-radius: 8px;
-            color: var(--text-2);
-            font-size: .84rem;
-            font-weight: 600;
-            line-height: 1.2;
-            text-decoration: none;
-            transition:
-                background-color 180ms ease,
-                color 180ms ease;
-        }}
-        .sidebar-portfolio-link:hover,
-        .sidebar-portfolio-link:focus-visible {{
-            color: var(--data-blue);
-            background: rgba(239, 246, 255, .82);
-            outline: none;
-            text-decoration: none;
-        }}
-        .sidebar-portfolio-link:focus-visible {{
-            box-shadow: 0 0 0 3px rgba(180, 83, 9, .14);
-        }}
-        .sidebar-portfolio-link-active {{
-            color: var(--data-blue);
-            background: rgba(180, 83, 9, .09);
-            font-weight: 700;
-        }}
-        .sidebar-project-expander {{
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-        }}
-        .sidebar-project-summary {{
-            cursor: pointer;
-            list-style: none;
-            user-select: none;
-        }}
-        .sidebar-project-card {{
-            position: relative;
-            width: 100%;
-            min-height: 92px;
-            padding: .75rem 2rem .75rem .75rem;
-            border: 1px solid rgba(180, 83, 9, .18);
-            border-radius: 11px;
-            background:
-                radial-gradient(circle at 85% 15%, rgba(30, 58, 95, .09), transparent 38%),
-                linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(239, 246, 255, .86));
-            box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
-            overflow: hidden;
-            transition:
-                transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 220ms ease,
-                box-shadow 220ms ease;
-        }}
-        .sidebar-project-chevron {{
-            position: absolute;
-            top: .78rem;
-            right: .68rem;
-        }}
-        .sidebar-project-card-active {{
-            border-color: rgba(180, 83, 9, .34);
-            background:
-                radial-gradient(circle at 85% 15%, rgba(30, 58, 95, .12), transparent 38%),
-                rgba(239, 246, 255, .92);
-        }}
-        .sidebar-project-expander.is-active > .sidebar-project-summary {{
-            border-color: rgba(180, 83, 9, .42);
-            background:
-                radial-gradient(circle at 85% 15%, rgba(30, 58, 95, .11), transparent 38%),
-                rgba(239, 246, 255, .94);
-        }}
-        .sidebar-project-card-header {{
-            display: flex;
-            align-items: center;
-            gap: .62rem;
+        .sidebar-project-header-copy {{
             min-width: 0;
         }}
         .sidebar-project-icon {{
-            width: 30px;
-            height: 30px;
-            flex: 0 0 30px;
+            width: 26px;
+            height: 26px;
+            flex: 0 0 26px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 9px;
+            border-radius: 8px;
             color: var(--data-blue);
             background: rgba(180, 83, 9, .10);
             border: 1px solid rgba(180, 83, 9, .16);
         }}
         .sidebar-project-icon svg {{
-            width: 17px;
-            height: 17px;
+            width: 15px;
+            height: 15px;
             fill: none;
             stroke: currentColor;
             stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
         }}
-        .sidebar-project-copy {{
-            min-width: 0;
-            padding-right: .7rem;
-        }}
         .sidebar-project-name {{
             color: var(--text);
             font-size: .86rem;
             font-weight: 800;
-            line-height: 1.16;
-            overflow-wrap: anywhere;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }}
         .sidebar-project-type {{
             color: var(--muted);
             font-size: .7rem;
             font-weight: 650;
             line-height: 1.2;
-            margin-top: .18rem;
+            margin-top: .1rem;
         }}
         .sidebar-project-links {{
-            position: relative;
             display: flex;
             flex-direction: column;
             gap: .08rem;
-            margin: .25rem 0 .15rem .8rem;
-            padding: .35rem 0 .25rem .85rem;
-            border-left: 1px solid rgba(180, 83, 9, .20);
-        }}
-        .sidebar-project-expander[open] > .sidebar-project-links {{
-            animation: sidebar-project-content-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
-        }}
-        @keyframes sidebar-project-content-in {{
-            from {{
-                opacity: 0;
-                transform: translateY(-4px);
-            }}
-            to {{
-                opacity: 1;
-                transform: translateY(0);
-            }}
-        }}
-        .sidebar-project-link {{
-            position: relative;
-            display: flex;
-            align-items: center;
-            min-height: 2.05rem;
-            padding: .38rem .5rem;
-            border-radius: 8px;
-            color: var(--text-2);
-            font-size: .82rem;
-            font-weight: 600;
-            line-height: 1.2;
-            text-decoration: none;
-            transition:
-                background-color 180ms ease,
-                color 180ms ease,
-                border-color 180ms ease;
-        }}
-        .sidebar-project-link::before {{
-            content: "";
-            position: absolute;
-            left: -.98rem;
-            top: 50%;
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            background: rgba(180, 83, 9, .26);
-            transform: translateY(-50%);
-        }}
-        .sidebar-project-link:hover,
-        .sidebar-project-link:focus-visible {{
-            color: var(--data-blue);
-            background: rgba(239, 246, 255, .82);
-            text-decoration: none;
-        }}
-        .sidebar-project-link:hover::before,
-        .sidebar-project-link:focus-visible::before {{
-            background: var(--data-blue);
-        }}
-        .sidebar-project-link-active {{
-            color: var(--data-blue);
-            background: rgba(180, 83, 9, .09);
-            font-weight: 700;
-        }}
-        .sidebar-project-link-active::before {{
-            background: #b45309;
-            box-shadow: 0 0 0 3px rgba(180, 83, 9, .12);
+            margin: 0 0 .35rem .85rem;
         }}
         [data-testid="stSidebar"] [data-testid="stPageLink"] {{
             width: 100%;
@@ -637,95 +387,12 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
                 background-color 180ms ease,
                 color 180ms ease;
         }}
-        [data-testid="stSidebar"] [data-testid="stPageLink"] a {{
-            position: relative;
-        }}
-        [data-testid="stSidebar"] [data-testid="stPageLink"] a::before {{
-            content: "";
-            position: absolute;
-            left: -.98rem;
-            top: 50%;
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            background: rgba(180, 83, 9, .26);
-            transform: translateY(-50%);
-        }}
         [data-testid="stSidebar"] [data-testid="stPageLink"] a:hover,
         [data-testid="stSidebar"] [data-testid="stPageLink"] a:focus-visible {{
             color: var(--data-blue);
             background: rgba(239, 246, 255, .82);
             outline: none;
             text-decoration: none;
-        }}
-        [data-testid="stSidebar"] [data-testid="stPageLink"] a:hover::before,
-        [data-testid="stSidebar"] [data-testid="stPageLink"] a:focus-visible::before {{
-            background: var(--data-blue);
-        }}
-        .sidebar-project-mini-lineage {{
-            position: relative;
-            display: grid;
-            grid-template-columns: 10px minmax(0, 1fr) 10px minmax(0, 1fr) 10px;
-            align-items: center;
-            gap: .25rem;
-            height: 22px;
-            margin-top: .62rem;
-            opacity: .82;
-            pointer-events: none;
-        }}
-        .sidebar-mini-stage {{
-            position: relative;
-            z-index: 3;
-            width: 10px;
-            height: 10px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, .95);
-            border: 1px solid rgba(180, 83, 9, .26);
-        }}
-        .sidebar-mini-mart {{
-            border-color: rgba(30, 58, 95, .35);
-            background: rgba(236, 254, 255, .95);
-        }}
-        .sidebar-mini-track {{
-            position: relative;
-            z-index: 1;
-            height: 2px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, rgba(180, 83, 9, .24), rgba(30, 58, 95, .26));
-        }}
-        .sidebar-mini-packet {{
-            position: absolute;
-            z-index: 2;
-            left: 3px;
-            top: 50%;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #b45309;
-            box-shadow:
-                0 0 0 3px rgba(180, 83, 9, .10),
-                0 0 7px rgba(180, 83, 9, .26);
-            transform: translate3d(0, -50%, 0);
-            animation: sidebar-mini-packet-flow 4s linear infinite;
-            pointer-events: none;
-        }}
-        @keyframes sidebar-mini-packet-flow {{
-            0% {{ left: 3px; opacity: 0; background: #b45309; }}
-            8% {{ opacity: 1; }}
-            72% {{ opacity: 1; background: #b45309; }}
-            88% {{ opacity: 1; background: #1e3a5f; }}
-            96%, 100% {{ left: calc(100% - 8px); opacity: 0; background: #1e3a5f; }}
-        }}
-        .sidebar-projects-expander:not([open]) .sidebar-mini-packet {{
-            animation-play-state: paused;
-        }}
-        @media (hover: hover) and (pointer: fine) {{
-            .sidebar-project-card:hover,
-            .sidebar-project-card:focus-within {{
-                transform: translateY(-2px);
-                border-color: rgba(180, 83, 9, .38);
-                box-shadow: 0 10px 24px rgba(180, 83, 9, .10);
-            }}
         }}
 
         .page-header {{
@@ -4540,16 +4207,6 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             .about-hover-card:focus-within,
             .experience-hover-card:hover,
             .experience-hover-card:focus-within,
-            .sidebar-project-card,
-            .sidebar-project-card:hover,
-            .sidebar-project-card:focus-within,
-            .sidebar-section-content,
-            .sidebar-projects-content,
-            .sidebar-portfolio-content,
-            .sidebar-project-links,
-            .sidebar-expander-chevron,
-            .sidebar-project-chevron,
-            .sidebar-mini-packet,
             .st-key-home_profile_photo_shell,
             .st-key-home_profile_photo_shell img,
             .st-key-home_profile_info_card,
@@ -4640,9 +4297,6 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             .hero-flow-motion,
             .featured-lineage-pulse,
             .featured-lineage-energy {{
-                display: none;
-            }}
-            .sidebar-mini-packet {{
                 display: none;
             }}
             .data-flow-pulse {{
