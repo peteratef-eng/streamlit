@@ -4,13 +4,11 @@ import base64
 import html
 from pathlib import Path
 from textwrap import dedent
-from datetime import datetime
 from html.parser import HTMLParser
 
 import streamlit as st
 
 from dashboard.data_loader import load_dashboard_metadata
-from portfolio.content.experience import EXPERIENCE
 from portfolio.content.profile import PROFILE
 from portfolio.content.projects import PROJECTS
 from portfolio.content.skills import SKILL_GROUPS
@@ -101,27 +99,6 @@ market_dashboard_href = route_href("/market_dashboard")
 project_overview_href = route_href("/project_overview")
 tech_stack = " - ".join(project["technologies"][:6])
 hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
-def experience_years() -> int:
-    starts = [datetime.strptime(item["start_date"], "%B %Y") for item in EXPERIENCE]
-    ends = [datetime.strptime(item["end_date"], "%B %Y") for item in EXPERIENCE]
-    return (max(ends) - min(starts)).days // 365
-
-
-def dbt_model_count() -> int:
-    return sum(1 for _ in (ROOT / "job_market_dbt" / "models").rglob("*.sql"))
-
-
-model_count = dbt_model_count()
-hero_highlights = [
-    (f"{experience_years()}+", "Years working with data"),
-    (f"{source_rows / 1_000_000:.1f}M+" if isinstance(source_rows, int) else "", "Job postings processed"),
-    (str(model_count) if model_count else "", "dbt models built"),
-]
-highlights_markup = "".join(
-    f'<div class="hero-highlight"><strong>{html.escape(value)}</strong><span>{html.escape(label)}</span></div>'
-    for value, label in hero_highlights
-    if value
-)
 stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
 hero_photo_markup = (
     f'<img class="hero-profile-image" src="{hero_photo_src}" alt="Portrait of Peter Atef, Junior Data Engineer">'
@@ -141,13 +118,17 @@ st.markdown(
         <div class="hero-copy">
             <div class="hero-kicker">Hi, I'm Peter Atef</div>
             <h1>Junior Data Engineer</h1>
-            <p class="hero-description">I build reliable data pipelines and transform raw, messy data into analytics-ready insights using Python, SQL, PostgreSQL, and dbt.</p>
+            <p class="hero-description">{html.escape(PROFILE["hero_subtitle"])}</p>
+            <p class="hero-description hero-description-secondary">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
             <div class="hero-actions">
                 <a class="portfolio-button portfolio-button-primary hero-primary-action" href="{project_overview_href}" target="_self">EXPLORE MY PROJECT<span aria-hidden="true">-&gt;</span></a>
                 <a class="portfolio-button" href="{resume_link}"{resume_attr}>DOWNLOAD RESUME</a>
                 <a class="portfolio-button portfolio-button-quiet" href="{contact_href}" target="_self">CONTACT ME</a>
             </div>
-            <div class="hero-highlights">{highlights_markup}</div>
+            <div class="hero-status-line">
+                <span class="hero-status-dot" aria-hidden="true"></span>
+                {html.escape(PROFILE["current_focus_status"])}
+            </div>
         </div>
         <article class="hero-profile-card">
             <div class="hero-profile-media">

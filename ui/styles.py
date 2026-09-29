@@ -1548,30 +1548,25 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             gap: .5rem;
             width: 100%;
         }}
-        .hero-highlights {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2.5rem;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }}
-        .hero-highlight {{
-            display: flex;
-            flex-direction: column;
-            gap: .15rem;
-        }}
-        .hero-highlight strong {{
-            color: var(--text);
-            font-size: 1.45rem;
-            font-weight: 800;
-            line-height: 1.1;
-        }}
-        .hero-highlight span {{
+        .hero-description-secondary {{
+            margin-top: .35rem;
             color: var(--muted);
-            font-size: .78rem;
-            font-weight: 600;
-            line-height: 1.3;
+            font-size: .88rem;
+        }}
+        .hero-status-line {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+            color: var(--muted);
+            font-size: .875rem;
+        }}
+        .hero-status-dot {{
+            width: 8px;
+            height: 8px;
+            min-width: 8px;
+            border-radius: 50%;
+            background: var(--positive);
         }}
         .hero-profile-links a {{
             display: flex;
@@ -4286,15 +4281,9 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
                 width: 140px;
                 height: 140px;
             }}
-            .hero-highlights {{
-                gap: 1.2rem 1.6rem;
-                margin-top: 1.4rem;
-            }}
-            .hero-highlight strong {{
-                font-size: 1.2rem;
-            }}
-            .hero-highlight span {{
-                font-size: .7rem;
+            .hero-status-line {{
+                margin-top: 1.2rem;
+                font-size: .8rem;
             }}
             .hero-skill-section {{
                 width: 100%;
