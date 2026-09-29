@@ -19,7 +19,7 @@ PROJECTS = [
         "featured": True,
         "technologies": ["Python", "Pandas", "PostgreSQL", "dbt", "SQL", "Streamlit", "Plotly", "Docker"],
         "key_metric": "1.6M+ job postings",
-        "cover_image": "",
+        "cover_image": "assets/projects/job-market-lineage.png",
         "demo_url": "",
         "repository_url": "https://github.com/peteratef-eng/job-market-data-engineering",
         "case_study_page": "views/project_overview.py",

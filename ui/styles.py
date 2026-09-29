@@ -1680,10 +1680,7 @@ def _build_global_styles(theme: dict[str, str]) -> str:
         }}
         .featured-preview img {{
             width: 100%;
-            height: 100%;
-            min-height: 230px;
-            object-fit: cover;
-            object-position: center;
+            height: auto;
             display: block;
         }}
         .featured-preview-fallback {{

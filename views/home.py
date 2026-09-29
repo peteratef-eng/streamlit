@@ -216,118 +216,13 @@ repository_button = (
     if project.get("repository_url")
     else ""
 )
-preview_markup = dedent(
-    """
-    <div class="featured-lineage-preview" aria-label="Unified data lineage: staging company and job-posting models feed an enriched job-postings model and four analytics marts; staging job-skill and skill models feed an enriched skills model and the skill-demand mart.">
-        <div class="featured-lineage-header">
-            <span>Live Data Lineage</span>
-            <small><span aria-hidden="true"></span>dbt models connected</small>
-        </div>
-        <div class="featured-lineage-canvas">
-            <div class="featured-lineage-stage-headings" aria-hidden="true">
-                <span>Sources</span>
-                <span>Intermediate</span>
-                <span>Marts</span>
-            </div>
-
-            <section class="featured-lineage-group featured-lineage-group-job" aria-label="Job postings lineage">
-                <div class="featured-lineage-branch-title">Job Postings Lineage</div>
-                <div class="featured-lineage-graph">
-                    <div class="featured-lineage-column featured-lineage-sources">
-                        <div class="featured-lineage-node featured-lineage-node-source featured-lineage-source-a" tabindex="0" title="stg_companies" aria-label="stg_companies, source model" data-tooltip="Source: raw company records"><span class="featured-lineage-model-name">stg_companies</span></div>
-                        <div class="featured-lineage-node featured-lineage-node-source featured-lineage-source-b" tabindex="0" title="stg_job_postings" aria-label="stg_job_postings, source model" data-tooltip="Source: raw job posting records"><span class="featured-lineage-model-name">stg_job_<br>postings</span></div>
-                    </div>
-                    <div class="featured-lineage-column featured-lineage-intermediate">
-                        <div class="featured-lineage-node featured-lineage-node-intermediate featured-lineage-int" tabindex="0" title="int_job_postings_enriched" aria-label="int_job_postings_enriched, intermediate model" data-tooltip="Intermediate: postings joined with company data"><span class="featured-lineage-model-name">int_job_postings_<br>enriched</span></div>
-                    </div>
-                    <div class="featured-lineage-column featured-lineage-marts">
-                        <div class="featured-lineage-node featured-lineage-node-mart featured-lineage-mart-1" tabindex="0" title="mart_company_leaderboard" aria-label="mart_company_leaderboard, mart model" data-tooltip="Mart: top hiring companies ranked"><span class="featured-lineage-model-name">mart_company_<br>leaderboard</span></div>
-                        <div class="featured-lineage-node featured-lineage-node-mart featured-lineage-mart-2" tabindex="0" title="mart_monthly_job_trends" aria-label="mart_monthly_job_trends, mart model" data-tooltip="Mart: posting volume trends by month"><span class="featured-lineage-model-name">mart_monthly_<br>job_trends</span></div>
-                        <div class="featured-lineage-node featured-lineage-node-mart featured-lineage-mart-3" tabindex="0" title="mart_remote_work_trends" aria-label="mart_remote_work_trends, mart model" data-tooltip="Mart: remote vs on-site trends"><span class="featured-lineage-model-name">mart_remote_<br>work_trends</span></div>
-                        <div class="featured-lineage-node featured-lineage-node-mart featured-lineage-mart-4" tabindex="0" title="mart_salary_trends" aria-label="mart_salary_trends, mart model" data-tooltip="Mart: salary trends by role and market"><span class="featured-lineage-model-name">mart_salary_<br>trends</span></div>
-                    </div>
-                    <svg class="featured-lineage-links featured-lineage-sequence" viewBox="0 0 100 120" preserveAspectRatio="none" aria-hidden="true">
-                        <defs>
-                            <marker id="featuredLineageArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
-                                <path d="M0,0 L8,4 L0,8 Z"></path>
-                            </marker>
-                            <filter id="featuredLineageGlow" x="-60%" y="-60%" width="220%" height="220%">
-                                <feGaussianBlur stdDeviation="1.2" result="blur"></feGaussianBlur>
-                                <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
-                            </filter>
-                        </defs>
-                        <path id="jobSourceAPath" class="featured-lineage-link featured-lineage-link-source" d="M24 34 C30 34 31 56 38 56"></path>
-                        <path id="jobSourceBPath" class="featured-lineage-link featured-lineage-link-source" d="M24 82 C30 82 31 64 38 64"></path>
-                        <path id="jobMergePath" class="featured-lineage-link featured-lineage-link-merge" d="M38 60 H45"></path>
-                        <path id="jobOutPath" class="featured-lineage-link featured-lineage-link-output" d="M57 60 H64"></path>
-                        <path id="jobMart1Path" class="featured-lineage-link featured-lineage-link-mart" d="M64 60 C68 60 68 22 75 22"></path>
-                        <path id="jobMart2Path" class="featured-lineage-link featured-lineage-link-mart" d="M64 60 C69 60 69 47 75 47"></path>
-                        <path id="jobMart3Path" class="featured-lineage-link featured-lineage-link-mart" d="M64 60 C69 60 69 73 75 73"></path>
-                        <path id="jobMart4Path" class="featured-lineage-link featured-lineage-link-mart" d="M64 60 C68 60 68 98 75 98"></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M24 34 C30 34 31 56 38 56"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.08;0.23;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M24 82 C30 82 31 64 38 64"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.08;0.23;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M38 60 H45"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.23;0.31;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M57 60 H64"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.32;0.42;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy featured-lineage-energy-mart" pathLength="100" d="M64 60 C68 60 68 22 75 22"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.42;0.58;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy featured-lineage-energy-mart" pathLength="100" d="M64 60 C69 60 69 47 75 47"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.44;0.60;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy featured-lineage-energy-mart" pathLength="100" d="M64 60 C69 60 69 73 75 73"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.46;0.62;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy featured-lineage-energy-mart" pathLength="100" d="M64 60 C68 60 68 98 75 98"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.48;0.64;1" values="100;100;0;0"></animate></path>
-                        <circle class="featured-lineage-pulse featured-lineage-source-pulse" r="2.2" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.08;0.23;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobSourceAPath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-source-pulse" r="2.2" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.08;0.23;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobSourceBPath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-merge-pulse" r="2.8" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.23;0.31;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobMergePath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-output-pulse" r="2.4" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.32;0.42;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobOutPath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-mart-pulse featured-lineage-mart-pulse-1" r="2" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.42;0.58;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobMart1Path"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-mart-pulse featured-lineage-mart-pulse-2" r="2" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.44;0.60;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobMart2Path"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-mart-pulse featured-lineage-mart-pulse-3" r="2" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.46;0.62;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobMart3Path"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-mart-pulse featured-lineage-mart-pulse-4" r="2" filter="url(#featuredLineageGlow)"><animateMotion dur="8s" repeatCount="indefinite" keyTimes="0;0.48;0.64;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#jobMart4Path"></mpath></animateMotion></circle>
-                    </svg>
-                </div>
-            </section>
-
-            <section class="featured-lineage-group featured-lineage-group-skill" aria-label="Skills lineage">
-                <div class="featured-lineage-branch-title">Skills Lineage</div>
-                <div class="featured-lineage-graph">
-                    <div class="featured-lineage-column featured-lineage-sources">
-                        <div class="featured-lineage-node featured-lineage-node-source featured-lineage-source-a" tabindex="0" title="stg_job_skills" aria-label="stg_job_skills, source model" data-tooltip="Source: raw job-to-skill mappings"><span class="featured-lineage-model-name">stg_job_<br>skills</span></div>
-                        <div class="featured-lineage-node featured-lineage-node-source featured-lineage-source-b" tabindex="0" title="stg_skills" aria-label="stg_skills, source model" data-tooltip="Source: raw skill reference data"><span class="featured-lineage-model-name">stg_skills</span></div>
-                    </div>
-                    <div class="featured-lineage-column featured-lineage-intermediate">
-                        <div class="featured-lineage-node featured-lineage-node-intermediate featured-lineage-int" tabindex="0" title="int_job_skills_enriched" aria-label="int_job_skills_enriched, intermediate model" data-tooltip="Intermediate: skills joined with job postings"><span class="featured-lineage-model-name">int_job_skills_<br>enriched</span></div>
-                    </div>
-                    <div class="featured-lineage-column featured-lineage-marts featured-lineage-marts-single">
-                        <div class="featured-lineage-node featured-lineage-node-mart featured-lineage-mart-1" tabindex="0" title="mart_skill_demand_by_role" aria-label="mart_skill_demand_by_role, mart model" data-tooltip="Mart: skill demand ranked by role"><span class="featured-lineage-model-name">mart_skill_demand_<br>by_role</span></div>
-                    </div>
-                    <svg class="featured-lineage-links featured-lineage-sequence" viewBox="0 0 100 120" preserveAspectRatio="none" aria-hidden="true">
-                        <defs>
-                            <marker id="featuredLineageArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
-                                <path d="M0,0 L8,4 L0,8 Z"></path>
-                            </marker>
-                        </defs>
-                        <path id="skillSourceAPath" class="featured-lineage-link featured-lineage-link-source" d="M24 34 C30 34 31 56 38 56"></path>
-                        <path id="skillSourceBPath" class="featured-lineage-link featured-lineage-link-source" d="M24 82 C30 82 31 64 38 64"></path>
-                        <path id="skillMergePath" class="featured-lineage-link featured-lineage-link-merge" d="M38 60 H45"></path>
-                        <path id="skillOutPath" class="featured-lineage-link featured-lineage-link-output" d="M57 60 H75"></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M24 34 C30 34 31 56 38 56"><animate attributeName="stroke-dashoffset" dur="8s" begin="1s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.08;0.23;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M24 82 C30 82 31 64 38 64"><animate attributeName="stroke-dashoffset" dur="8s" begin="1s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.08;0.23;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy" pathLength="100" d="M38 60 H45"><animate attributeName="stroke-dashoffset" dur="8s" begin="1s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.23;0.31;1" values="100;100;0;0"></animate></path>
-                        <path class="featured-lineage-energy featured-lineage-energy-mart" pathLength="100" d="M57 60 H75"><animate attributeName="stroke-dashoffset" dur="8s" begin="1s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.32;0.58;1" values="100;100;0;0"></animate></path>
-                        <circle class="featured-lineage-pulse featured-lineage-source-pulse" r="2.2"><animateMotion dur="8s" begin="1s" repeatCount="indefinite" keyTimes="0;0.08;0.23;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#skillSourceAPath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-source-pulse" r="2.2"><animateMotion dur="8s" begin="1s" repeatCount="indefinite" keyTimes="0;0.08;0.23;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#skillSourceBPath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-merge-pulse" r="2.8"><animateMotion dur="8s" begin="1s" repeatCount="indefinite" keyTimes="0;0.23;0.31;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#skillMergePath"></mpath></animateMotion></circle>
-                        <circle class="featured-lineage-pulse featured-lineage-output-pulse" r="2.4"><animateMotion dur="8s" begin="1s" repeatCount="indefinite" keyTimes="0;0.32;0.58;1" keyPoints="0;0;1;1" calcMode="linear"><mpath href="#skillOutPath"></mpath></animateMotion></circle>
-                    </svg>
-                </div>
-            </section>
-        </div>
-    </div>
-    """
-).strip()
-preview_markup = collapse_html_fragment(preview_markup)
-validate_html_fragment(
-    preview_markup,
-    expected_start='<div class="featured-lineage-preview"',
-    expected_end="</div>",
+cover_src = asset_data_uri(str(ROOT / project["cover_image"]), "image/png") if project.get("cover_image") else ""
+preview_markup = (
+    f'<img src="{cover_src}" alt="dbt lineage graph: staging models feed intermediate models and analytics marts" loading="lazy">'
+    if cover_src
+    else '<div class="featured-preview-fallback">Project preview</div>'
 )
+
 featured_project_markup = (
     dedent(
         f"""
