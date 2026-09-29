@@ -121,7 +121,7 @@ st.markdown(
             <p class="hero-description">{html.escape(PROFILE["hero_subtitle"])}</p>
             <p class="hero-description hero-description-secondary">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
             <div class="hero-actions">
-                <a class="portfolio-button portfolio-button-primary hero-primary-action" href="{project_overview_href}" target="_self">EXPLORE MY PROJECT<span aria-hidden="true">-&gt;</span></a>
+                <a class="portfolio-button portfolio-button-primary hero-primary-action" href="{project_overview_href}" target="_self">EXPLORE MY PROJECT<span aria-hidden="true">&#8594;</span></a>
                 <a class="portfolio-button" href="{resume_link}"{resume_attr}>DOWNLOAD RESUME</a>
                 <a class="portfolio-button portfolio-button-quiet" href="{contact_href}" target="_self">CONTACT ME</a>
             </div>

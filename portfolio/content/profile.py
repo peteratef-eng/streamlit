@@ -28,7 +28,7 @@ PROFILE = {
     "gmail_compose_url": "https://mail.google.com/mail/?view=cm&fs=1&to=petterattef763@gmail.com&su=Junior%20Data%20Engineer%20Opportunity",
     "mailto_url": "mailto:petterattef763@gmail.com?subject=Junior%20Data%20Engineer%20Opportunity",
     "linkedin_url": "https://www.linkedin.com/in/peter-atef-eng/",
-    "github_url": "https://github.com/peteratef-eng/job-market-data-engineering",
+    "github_url": "https://github.com/peteratef-eng",
     "resume_path": "assets/resume/Peter Resume 2026.pdf",
     "availability": "Open to Junior Data Engineer opportunities.",
 }
