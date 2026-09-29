@@ -1,10 +1,32 @@
 from __future__ import annotations
 
+import re
+
 import streamlit as st
 
 
+_COMMENT_RE = re.compile(r"/\*.*?\*/", re.S)
+_WHITESPACE_RE = re.compile(r"\s+")
+_PUNCTUATION_RE = re.compile(r"\s*([{};,>])\s*")
+
+
+def _minify_css(css: str) -> str:
+    css = _COMMENT_RE.sub("", css)
+    css = _WHITESPACE_RE.sub(" ", css)
+    return _PUNCTUATION_RE.sub(r"\1", css).strip()
+
+
+@st.cache_resource(show_spinner=False)
+def _global_styles_html(theme_items: tuple[tuple[str, str], ...]) -> str:
+    return _build_global_styles(dict(theme_items))
+
+
 def inject_global_styles(theme: dict[str, str]) -> None:
-    st.markdown(
+    st.markdown(_global_styles_html(tuple(sorted(theme.items()))), unsafe_allow_html=True)
+
+
+def _build_global_styles(theme: dict[str, str]) -> str:
+    css = (
         f"""
         <style>
         :root {{
@@ -734,8 +756,8 @@ def inject_global_styles(theme: dict[str, str]) -> None:
             margin-top: 1rem;
         }}
         .page-header-home .product-kicker {{
-            color: #17367D;
-            border-color: #B8CEF4;
+            color: var(--accent-hover);
+            border-color: color-mix(in srgb, var(--accent) 35%, transparent);
             font-size: .96rem;
             font-weight: 700;
             padding: .5rem .875rem;
@@ -4592,6 +4614,6 @@ def inject_global_styles(theme: dict[str, str]) -> None:
             }}
         }}
         </style>
-        """,
-        unsafe_allow_html=True,
+        """
     )
+    return _minify_css(css)

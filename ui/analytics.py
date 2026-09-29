@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import streamlit as st
 import streamlit.components.v1 as components
 
 
@@ -8,6 +9,11 @@ PRODUCTION_URL = "https://peter-atef-eng.streamlit.app"
 
 
 def initialize_analytics() -> None:
+    # The script patches the parent window once and its listeners persist across
+    # reruns, so re-creating the iframe on every interaction is wasted work.
+    if st.session_state.get("_analytics_initialized"):
+        return
+    st.session_state["_analytics_initialized"] = True
     components.html(
         f"""
         <script>
