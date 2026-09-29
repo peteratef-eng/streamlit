@@ -490,10 +490,11 @@ def project_card(project: dict, *, actions: bool = False, featured: bool = False
             if repository_url
             else ""
         )
+        case_study_route = project.get("case_study_route", "")
         case_study_link = (
             ""
-            if featured and project.get("slug") == "job-market-intelligence"
-            else f'<a class="project-action project-action-primary" href="{route_href("/project_overview")}" target="_self">View Case Study</a>'
+            if not case_study_route or featured
+            else f'<a class="project-action project-action-primary" href="{route_href(case_study_route)}" target="_self">View Case Study</a>'
         )
         demo_class = "project-action project-action-primary" if not case_study_link else "project-action"
         demo_target_attr = ' target="_self"' if demo_url.startswith("/") else ""

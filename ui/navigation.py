@@ -25,6 +25,13 @@ SIDEBAR_PROJECTS = [
             {"label": "Data Quality", "path": "views/data_quality.py", "route": "/data_quality", "url_path": "data_quality"},
         ],
     },
+    {
+        "name": "E-Commerce Sales Analysis",
+        "type": "Data Analysis Project",
+        "pages": [
+            {"label": "Dashboard", "path": "views/ecommerce_dashboard.py", "route": "/ecommerce_dashboard", "url_path": "ecommerce_dashboard"},
+        ],
+    },
 ]
 
 

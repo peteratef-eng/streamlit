@@ -10,6 +10,8 @@ data/*
 !data/dashboard/
 !data/dashboard/*.csv
 !data/dashboard/*.json
+!data/ecommerce/
+!data/ecommerce/*.csv
 logs/
 python_training/
 src/*
