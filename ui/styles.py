@@ -801,8 +801,8 @@ def _build_global_styles(theme: dict[str, str]) -> str:
 
         .portfolio-hero {{
             display: grid;
-            grid-template-columns: minmax(0, 1.5fr) minmax(210px, .48fr);
-            align-items: start;
+            grid-template-columns: minmax(0, 1.4fr) minmax(280px, .9fr);
+            align-items: center;
             column-gap: clamp(1.1rem, 2vw, 1.65rem);
             row-gap: .55rem;
             height: auto;
@@ -1452,10 +1452,10 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             align-self: start;
             grid-column: 2;
             grid-row: 1;
-            width: min(100%, 340px);
+            width: min(100%, 360px);
             height: fit-content;
             min-height: 0;
-            padding: 0;
+            padding: 1.6rem 1.4rem 1.35rem;
             border: 1px solid color-mix(in srgb, var(--border) 85%, var(--accent));
             border-radius: 20px;
             background: var(--surface);
@@ -1486,33 +1486,26 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.16);
         }}
         .hero-profile-media {{
-            position: relative;
-            background: transparent;
-        }}
-        .hero-profile-media::after {{
-            content: "";
-            position: absolute;
-            inset: auto 0 0 0;
-            height: 38%;
-            background: linear-gradient(180deg, transparent, rgba(22, 33, 46, .18));
-            pointer-events: none;
+            display: flex;
+            justify-content: center;
         }}
         .hero-profile-image-wrap {{
-            width: 100%;
-            height: clamp(260px, 25vw, 300px);
+            width: 168px;
+            height: 168px;
             overflow: hidden;
-            border: 0;
-            border-radius: 0;
+            border-radius: 50%;
+            border: 3px solid var(--surface);
             background: var(--surface-2);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent), 0 10px 24px -8px rgba(22, 33, 46, .28);
         }}
         .hero-profile-image {{
             display: block;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center 22%;
-            border-radius: 0;
+            object-position: center 20%;
             border: 0;
+            border-radius: 0;
             box-shadow: none;
             transform: none;
             animation: none;
@@ -1520,38 +1513,16 @@ def _build_global_styles(theme: dict[str, str]) -> str:
         .hero-profile-identity {{
             display: flex;
             flex-direction: column;
-            gap: .85rem;
-            padding: 1.15rem 1.25rem 1.25rem;
-            text-align: left;
+            align-items: center;
+            gap: .9rem;
+            padding: 1.2rem 0 0;
+            text-align: center;
             border-top: 0;
-        }}
-        .hero-profile-heading {{
-            display: flex;
-            flex-direction: column;
-            gap: .25rem;
-        }}
-        .hero-profile-name {{
-            margin: 0;
-            color: var(--text);
-            font-size: clamp(1.6rem, 2.2vw, 1.95rem);
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -.01em;
-            white-space: nowrap;
-        }}
-        .hero-profile-role {{
-            margin: 0;
-            color: var(--accent);
-            font-size: .82rem;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            line-height: 1.3;
         }}
         .hero-profile-meta {{
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             flex-wrap: wrap;
             gap: .42rem;
             margin: 0;
@@ -1559,8 +1530,10 @@ def _build_global_styles(theme: dict[str, str]) -> str:
         .hero-profile-stack {{
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
             gap: .35rem;
-            padding-top: .85rem;
+            width: 100%;
+            padding-top: .9rem;
             border-top: 1px solid var(--border);
         }}
         .hero-profile-stack span {{
@@ -1576,6 +1549,33 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: .5rem;
+            width: 100%;
+        }}
+        .hero-highlights {{
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, auto));
+            justify-content: start;
+            gap: clamp(1rem, 2.5vw, 2rem);
+            margin-top: 1.15rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }}
+        .hero-highlight {{
+            display: flex;
+            flex-direction: column;
+            gap: .15rem;
+        }}
+        .hero-highlight strong {{
+            color: var(--text);
+            font-size: 1.45rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }}
+        .hero-highlight span {{
+            color: var(--muted);
+            font-size: .78rem;
+            font-weight: 600;
+            line-height: 1.3;
         }}
         .hero-profile-links a {{
             display: flex;
@@ -4286,12 +4286,19 @@ def _build_global_styles(theme: dict[str, str]) -> str:
                 margin: 0 auto;
                 transform: none;
             }}
-            .hero-profile-identity {{
-                text-align: center;
+            .hero-profile-image-wrap {{
+                width: 140px;
+                height: 140px;
             }}
-            .hero-profile-meta,
-            .hero-profile-stack {{
-                justify-content: center;
+            .hero-highlights {{
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: .6rem;
+            }}
+            .hero-highlight strong {{
+                font-size: 1.2rem;
+            }}
+            .hero-highlight span {{
+                font-size: .7rem;
             }}
             .hero-skill-section {{
                 width: 100%;
