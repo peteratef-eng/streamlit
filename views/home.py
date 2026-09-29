@@ -99,6 +99,7 @@ market_dashboard_href = route_href("/market_dashboard")
 project_overview_href = route_href("/project_overview")
 tech_stack = " - ".join(project["technologies"][:6])
 hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
+stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
 hero_photo_markup = (
     f'<img class="hero-profile-image" src="{hero_photo_src}" alt="Portrait of Peter Atef, Junior Data Engineer">'
     if hero_photo_src
@@ -150,6 +151,11 @@ st.markdown(
                     <span class="hero-profile-location">
                         {html.escape(PROFILE["location"])}
                     </span>
+                </div>
+                <div class="hero-profile-stack" aria-label="Core stack">{stack_chips}</div>
+                <div class="hero-profile-links">
+                    <a href="{html.escape(PROFILE["linkedin_url"])}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="{html.escape(PROFILE["github_url"])}" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
         </article>

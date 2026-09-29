@@ -1455,26 +1455,35 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             width: min(100%, 340px);
             height: fit-content;
             min-height: 0;
-            padding: .78rem;
-            border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-            border-radius: 22px;
-            background:
-                radial-gradient(circle at 82% 92%, color-mix(in srgb, var(--accent-bright) 10%, transparent), transparent 34%),
-                linear-gradient(145deg, color-mix(in srgb, var(--surface) 96%, var(--tag-bg)), color-mix(in srgb, var(--surface) 88%, var(--tag-bg)));
+            padding: 0;
+            border: 1px solid color-mix(in srgb, var(--border) 85%, var(--accent));
+            border-radius: 20px;
+            background: var(--surface);
             box-shadow:
-                0 18px 45px rgba(15, 23, 42, 0.08),
-                0 4px 14px rgba(180, 83, 9, 0.06);
+                0 24px 48px -20px rgba(22, 33, 46, 0.22),
+                0 2px 6px rgba(22, 33, 46, 0.05);
             overflow: hidden;
             transform: translateZ(0);
-            transform-origin: center center;
             transition:
                 transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 240ms ease,
                 box-shadow 240ms ease;
         }}
+        .hero-profile-card::before {{
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 4px;
+            z-index: 2;
+            background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+        }}
+        .hero-profile-card:hover {{
+            transform: translateY(-3px);
+            box-shadow:
+                0 30px 56px -20px rgba(22, 33, 46, 0.28),
+                0 2px 6px rgba(22, 33, 46, 0.05);
+        }}
         .hero-profile-card:focus-within {{
-            border-color: rgba(180, 83, 9, 0.72);
-            box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.12);
+            box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.16);
         }}
         .hero-profile-media {{
             position: relative;
@@ -1482,32 +1491,28 @@ def _build_global_styles(theme: dict[str, str]) -> str:
         }}
         .hero-profile-media::after {{
             content: "";
-            display: block;
-            height: 2px;
-            width: calc(100% - .7rem);
-            margin: .68rem auto 0;
-            border-radius: 999px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-bright));
-            opacity: .72;
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 38%;
+            background: linear-gradient(180deg, transparent, rgba(22, 33, 46, .18));
+            pointer-events: none;
         }}
         .hero-profile-image-wrap {{
             width: 100%;
-            height: clamp(245px, 24vw, 280px);
-            aspect-ratio: auto;
+            height: clamp(260px, 25vw, 300px);
             overflow: hidden;
-            border-radius: 17px;
-            background: color-mix(in srgb, var(--tag-bg) 58%, var(--surface));
-            border: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+            border: 0;
+            border-radius: 0;
+            background: var(--surface-2);
         }}
         .hero-profile-image {{
             display: block;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center 30%;
+            object-position: center 22%;
             border-radius: 0;
             border: 0;
-            background: color-mix(in srgb, var(--tag-bg) 58%, var(--surface));
             box-shadow: none;
             transform: none;
             animation: none;
@@ -1515,31 +1520,33 @@ def _build_global_styles(theme: dict[str, str]) -> str:
         .hero-profile-identity {{
             display: flex;
             flex-direction: column;
-            gap: 0;
-            padding: 1.02rem .28rem .18rem;
+            gap: .85rem;
+            padding: 1.15rem 1.25rem 1.25rem;
             text-align: left;
             border-top: 0;
         }}
         .hero-profile-heading {{
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: .25rem;
         }}
         .hero-profile-name {{
             margin: 0;
             color: var(--text);
-            font-size: clamp(2.12rem, 2.7vw, 2.5rem);
+            font-size: clamp(1.6rem, 2.2vw, 1.95rem);
             font-weight: 800;
-            line-height: 1.07;
-            letter-spacing: 0;
+            line-height: 1.1;
+            letter-spacing: -.01em;
             white-space: nowrap;
         }}
         .hero-profile-role {{
-            margin: .78rem 0 0;
-            color: var(--text-2);
-            font-size: clamp(1rem, 1.35vw, 1.1rem);
+            margin: 0;
+            color: var(--accent);
+            font-size: .82rem;
             font-weight: 700;
-            line-height: 1.22;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            line-height: 1.3;
         }}
         .hero-profile-meta {{
             display: flex;
@@ -1547,7 +1554,47 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             justify-content: flex-start;
             flex-wrap: wrap;
             gap: .42rem;
-            margin-top: .7rem;
+            margin: 0;
+        }}
+        .hero-profile-stack {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+            padding-top: .85rem;
+            border-top: 1px solid var(--border);
+        }}
+        .hero-profile-stack span {{
+            padding: 3px 9px;
+            border-radius: 6px;
+            background: var(--surface-2);
+            color: var(--text-2);
+            font-size: .75rem;
+            font-weight: 650;
+            line-height: 1.5;
+        }}
+        .hero-profile-links {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .5rem;
+        }}
+        .hero-profile-links a {{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--surface);
+            color: var(--text) !important;
+            font-size: .82rem;
+            font-weight: 700;
+            text-decoration: none !important;
+            transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+        }}
+        .hero-profile-links a:hover {{
+            border-color: var(--accent);
+            background: var(--hover);
+            color: var(--accent-hover) !important;
         }}
         .hero-profile-status {{
             display: inline-flex;
@@ -4235,15 +4282,15 @@ def _build_global_styles(theme: dict[str, str]) -> str:
                 margin-top: .9rem;
             }}
             .hero-profile-card {{
-                width: min(100%, 260px);
+                width: min(100%, 300px);
                 margin: 0 auto;
                 transform: none;
             }}
             .hero-profile-identity {{
                 text-align: center;
-                padding: .68rem .15rem .1rem;
             }}
-            .hero-profile-meta {{
+            .hero-profile-meta,
+            .hero-profile-stack {{
                 justify-content: center;
             }}
             .hero-skill-section {{
