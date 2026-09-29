@@ -16,16 +16,13 @@ def _minify_css(css: str) -> str:
     return _PUNCTUATION_RE.sub(r"\1", css).strip()
 
 
-@st.cache_resource(show_spinner=False)
-def _global_styles_html(theme_items: tuple[tuple[str, str], ...]) -> str:
-    return _build_global_styles(dict(theme_items))
-
-
 def inject_global_styles(theme: dict[str, str]) -> None:
-    st.markdown(_global_styles_html(tuple(sorted(theme.items()))), unsafe_allow_html=True)
+    st.markdown(_build_global_styles(tuple(sorted(theme.items()))), unsafe_allow_html=True)
 
 
-def _build_global_styles(theme: dict[str, str]) -> str:
+@st.cache_resource(show_spinner=False)
+def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
+    theme = dict(theme_items)
     css = (
         f"""
         <style>
@@ -1452,10 +1449,10 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             align-self: start;
             grid-column: 2;
             grid-row: 1;
-            width: min(100%, 360px);
+            width: min(100%, 300px);
             height: fit-content;
             min-height: 0;
-            padding: 1.6rem 1.4rem 1.35rem;
+            padding: 1.5rem;
             border: 1px solid color-mix(in srgb, var(--border) 85%, var(--accent));
             border-radius: 20px;
             background: var(--surface);
@@ -1490,8 +1487,8 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             justify-content: center;
         }}
         .hero-profile-image-wrap {{
-            width: 168px;
-            height: 168px;
+            width: 140px;
+            height: 140px;
             overflow: hidden;
             border-radius: 50%;
             border: 3px solid var(--surface);
@@ -1503,7 +1500,7 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center 20%;
+            object-position: center top;
             border: 0;
             border-radius: 0;
             box-shadow: none;
@@ -1552,11 +1549,10 @@ def _build_global_styles(theme: dict[str, str]) -> str:
             width: 100%;
         }}
         .hero-highlights {{
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, auto));
-            justify-content: start;
-            gap: clamp(1rem, 2.5vw, 2rem);
-            margin-top: 1.15rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            margin-top: 2rem;
             padding-top: 1rem;
             border-top: 1px solid var(--border);
         }}
@@ -4291,8 +4287,8 @@ def _build_global_styles(theme: dict[str, str]) -> str:
                 height: 140px;
             }}
             .hero-highlights {{
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: .6rem;
+                gap: 1.2rem 1.6rem;
+                margin-top: 1.4rem;
             }}
             .hero-highlight strong {{
                 font-size: 1.2rem;
