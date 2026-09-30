@@ -87,7 +87,6 @@ def collapse_html_fragment(markup: str) -> str:
     return " ".join(line.strip() for line in markup.splitlines() if line.strip())
 
 
-project = PROJECTS[0]
 metadata = load_dashboard_metadata()
 source_rows = metadata.get("source_job_postings_rows")
 
@@ -95,9 +94,7 @@ resume_href = asset_data_uri(str(RESUME_PATH), "application/pdf")
 resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume_href else ""
 resume_link = resume_href or html.escape(PROFILE["resume_path"])
 contact_href = route_href("/contact")
-market_dashboard_href = route_href("/market_dashboard")
 project_overview_href = route_href("/project_overview")
-tech_stack = " - ".join(project["technologies"][:6])
 hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
 stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
 hero_photo_markup = (
@@ -211,56 +208,79 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-repository_button = (
-    f'<a class="portfolio-button" href="{html.escape(project["repository_url"])}" rel="noopener noreferrer">VIEW ON GITHUB</a>'
-    if project.get("repository_url")
-    else ""
-)
-cover_src = asset_data_uri(str(ROOT / project["cover_image"]), "image/png") if project.get("cover_image") else ""
-preview_markup = (
-    f'<img src="{cover_src}" alt="dbt lineage graph: staging models feed intermediate models and analytics marts" loading="lazy">'
-    if cover_src
-    else '<div class="featured-preview-fallback">Project preview</div>'
+featured_projects = sorted(
+    (item for item in PROJECTS if item.get("featured")),
+    key=lambda item: item.get("sort_order", 999),
 )
 
-featured_project_markup = (
-    dedent(
-        f"""
-        <section class="featured-project-card" tabindex="0">
-            <div class="featured-project-copy">
-                <div class="section-eyebrow">Featured Project</div>
-                <h2>{html.escape(project["title"])}</h2>
-                <p>{html.escape(project["case_study_sections"]["Business problem"])}</p>
-                <p>{html.escape(project["case_study_sections"]["Project summary"])}</p>
-                <div class="featured-meta">
-                    <span>{html.escape(tech_stack)}</span>
-                    <span>{format_int(source_rows)} source postings</span>
+for featured_project in featured_projects:
+    tech_stack = " - ".join(featured_project["technologies"][:6])
+    is_job_market = featured_project["slug"] == "job-market-intelligence"
+    metric_label = (
+        f"{format_int(source_rows)} source postings"
+        if is_job_market
+        else html.escape(featured_project.get("key_metric", ""))
+    )
+    alt_text = (
+        "dbt lineage graph: staging models feed intermediate models and analytics marts"
+        if is_job_market
+        else f"{featured_project['title']} preview"
+    )
+    repository_button = (
+        f'<a class="portfolio-button" href="{html.escape(featured_project["repository_url"])}" rel="noopener noreferrer">VIEW ON GITHUB</a>'
+        if featured_project.get("repository_url")
+        else ""
+    )
+    cover_src = (
+        asset_data_uri(str(ROOT / featured_project["cover_image"]), "image/png")
+        if featured_project.get("cover_image")
+        else ""
+    )
+    preview_markup = (
+        f'<img src="{cover_src}" alt="{html.escape(alt_text)}" loading="lazy">'
+        if cover_src
+        else '<div class="featured-preview-fallback">Project preview</div>'
+    )
+    demo_href = route_href(featured_project.get("demo_url") or "/projects")
+
+    featured_project_markup = (
+        dedent(
+            f"""
+            <section class="featured-project-card" tabindex="0">
+                <div class="featured-project-copy">
+                    <div class="section-eyebrow">Featured Project</div>
+                    <h2>{html.escape(featured_project["title"])}</h2>
+                    <p>{html.escape(featured_project["case_study_sections"]["Business problem"])}</p>
+                    <p>{html.escape(featured_project["case_study_sections"]["Project summary"])}</p>
+                    <div class="featured-meta">
+                        <span>{html.escape(tech_stack)}</span>
+                        <span>{metric_label}</span>
+                    </div>
+                    <div class="hero-actions">
+                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">VIEW LIVE PROJECT</a>
+                        {repository_button}
+                    </div>
                 </div>
-                <div class="hero-actions">
-                    <a class="portfolio-button portfolio-button-primary" href="{market_dashboard_href}" target="_self">VIEW LIVE PROJECT</a>
-                    {repository_button}
+                <div class="featured-preview">
+            """
+        ).strip()
+        + "\n"
+        + preview_markup
+        + "\n"
+        + dedent(
+            """
                 </div>
-            </div>
-            <div class="featured-preview">
-        """
-    ).strip()
-    + "\n"
-    + preview_markup
-    + "\n"
-    + dedent(
-        """
-            </div>
-        </section>
-        """
-    ).strip()
-)
-featured_project_markup = collapse_html_fragment(featured_project_markup)
-validate_html_fragment(
-    featured_project_markup,
-    expected_start='<section class="featured-project-card"',
-    expected_end="</section>",
-)
-st.markdown(featured_project_markup, unsafe_allow_html=True)
+            </section>
+            """
+        ).strip()
+    )
+    featured_project_markup = collapse_html_fragment(featured_project_markup)
+    validate_html_fragment(
+        featured_project_markup,
+        expected_start='<section class="featured-project-card"',
+        expected_end="</section>",
+    )
+    st.markdown(featured_project_markup, unsafe_allow_html=True)
 
 st.markdown(
     f"""
