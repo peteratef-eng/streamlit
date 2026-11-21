@@ -383,7 +383,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent) !import
     .contact-hover-card { overflow-wrap: anywhere; }
     [data-testid="stMetricValue"] { font-size: 1.65rem; }
 }
-[data-testid="stMarkdownContainer"] a:not(.pa-button):not(.contact-card-action) { color: var(--accent) !important; text-decoration: none; }
+[data-testid="stMarkdownContainer"] a:not(.pa-button):not(.portfolio-button):not(.contact-card-action) { color: var(--accent) !important; text-decoration: none; }
 [data-testid="stMarkdownContainer"] a:hover { text-decoration: underline; }
 [data-baseweb="tag"] { background: var(--tag-bg) !important; color: var(--tag-text) !important; }
 [data-baseweb="tag"] span, [data-baseweb="tag"] svg { color: var(--tag-text) !important; fill: currentColor; }
@@ -418,3 +418,39 @@ a.pa-button-copper:hover { background: #A2F0DF !important; color: #0F172A !impor
 @media (max-width: 767px) {
     .st-key-weather_pipeline_figure { width: 100% !important; }
 }
+
+
+/* Style active navigation without inserting an empty layout element. */
+[class*="st-key-sidebar_"][class*="_active"] [data-testid="stPageLink"] a {
+    color: #DCE9F7 !important;
+    background: #1C304C !important;
+    font-weight: 700 !important;
+}
+/* Legacy case-study CTAs use the same explicit variants as newer actions. */
+a.portfolio-button-primary { background: #78E1CD !important; color: #0F172A !important; }
+a.portfolio-button-primary:hover { background: #A2F0DF !important; color: #0F172A !important; }
+a.portfolio-button:not(.portfolio-button-primary) { background: #142036 !important; color: #DCE9F7 !important; border-color: #47637E !important; }
+a.portfolio-button:not(.portfolio-button-primary):hover { background: #20344B !important; color: #A2F0DF !important; }
+/* Sidebar interaction states stay dark, including native page-link hover. */
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:focus-visible,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:active {
+    background: #20344B !important;
+    color: #DCE9F7 !important;
+}
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover *,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:focus-visible *,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:active *,
+[class*="st-key-sidebar_"][class*="_active"] [data-testid="stPageLink"] a * {
+    color: #DCE9F7 !important;
+}
+/* Form-submit buttons use a distinct native kind from ordinary primary buttons. */
+button[kind="primaryFormSubmit"], button[kind="primaryFormSubmit"] * {
+    color: #0F172A !important;
+}
+button[kind="primaryFormSubmit"] { background: #78E1CD !important; border-color: #78E1CD !important; }
+button[kind="primaryFormSubmit"]:hover,
+button[kind="primaryFormSubmit"]:focus-visible,
+button[kind="primaryFormSubmit"]:active { background: #A2F0DF !important; border-color: #A2F0DF !important; }
+a.portfolio-button, a.portfolio-button:hover,
+a.portfolio-button:focus-visible { text-decoration: none !important; }

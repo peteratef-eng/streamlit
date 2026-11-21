@@ -60,18 +60,7 @@ def _sidebar_page_link(page: dict[str, object], active: bool, group: str) -> Non
     route = str(page["route"])
     key = f"sidebar_{group}_{_route_slug(route)}"
     if active:
-        st.markdown(
-            f"""
-            <style>
-            .st-key-{key} [data-testid="stPageLink"] a {{
-                color: var(--data-blue) !important;
-                background: rgba(37, 99, 235, .09) !important;
-                font-weight: 700 !important;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
+        key += "_active"
     with st.container(key=key):
         st.page_link(str(page["path"]), label=str(page["label"]), use_container_width=True)
 

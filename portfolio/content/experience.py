@@ -5,7 +5,7 @@ EXPERIENCE = [
     {
         "company": "DIGICUST",
         "location": "Remote",
-        "role": "Integration Engineer",
+        "role": "Data Integration Engineer",
         "start_date": "January 2026",
         "end_date": "April 2026",
         "summary": "",
