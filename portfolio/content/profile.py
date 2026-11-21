@@ -22,7 +22,7 @@ PROFILE = {
         "Background in large-scale invoice & logistics data — now building pipelines with Python, "
         "SQL, PostgreSQL, and dbt."
     ),
-    "current_focus_status": "Currently building: Weather & Air Quality pipeline with Airflow",
+    "current_focus_status": "Weather pipeline implemented | Next: Air Quality integration",
     "location": "Egypt",
     "email": "petterattef763@gmail.com",
     "gmail_compose_url": "https://mail.google.com/mail/?view=cm&fs=1&to=petterattef763@gmail.com&su=Junior%20Data%20Engineer%20Opportunity",

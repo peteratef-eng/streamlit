@@ -448,20 +448,21 @@ Future improvements include:
 
 ## Live Demo
 
-Hosted dashboard URL: `https://REPLACE_WITH_YOUR_FLY_APP_URL.fly.dev`
+Hosted dashboard URL: `https://app-6py432aqcozmvm4vm477rp.streamlit.app/`
 
-The app is prepared for Fly.io deployment, but no paid resources or real deployment have been created from this repository.
+The portfolio is hosted on Streamlit Community Cloud. The optional Fly.io configuration below is a deployment template, not the live hosting setup.
 
 ---
 
 ## Streamlit Dashboard
 
-This repository now includes a recruiter-friendly Streamlit application with two sections:
+This repository now includes a recruiter-friendly Streamlit application with portfolio pages and project case studies:
 
 The portfolio uses anonymous Google Analytics 4 usage analytics to understand page visits and safe aggregate interactions. It does not send filter selections, search values, salary selections, company selections, email addresses, or form content.
 
-* `app.py`: project overview, business problem, pipeline explanation, source tables, model layers, quality checks, limitations, and developer positioning.
-* `pages/1_Interactive_Job_Market_Dashboard.py`: interactive dashboard with KPI cards, filters, Plotly charts, and plain-English chart explanations.
+* `app.py`: app entry point, shared layout, analytics, and navigation.
+* `views/`: portfolio pages and project views, including the Weather pipeline case study.
+* `views/market_dashboard.py`: interactive dashboard with KPI cards, filters, Plotly charts, and plain-English chart explanations.
 
 Dashboard features include:
 
@@ -557,8 +558,16 @@ http://localhost:8501
 
 ```text
 app.py
-pages/
-  1_Interactive_Job_Market_Dashboard.py
+views/
+  home.py
+  weather_pipeline.py
+  project_overview.py
+  market_dashboard.py
+  data_pipeline.py
+ui/
+  navigation.py
+portfolio/content/
+  projects.py
 dashboard/
   data_loader.py
   transformations.py

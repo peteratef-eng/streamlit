@@ -16,6 +16,19 @@ PORTFOLIO_PAGES = [
 
 SIDEBAR_PROJECTS = [
     {
+        "name": "Weather Forecast Data Platform",
+        "type": "Data Engineering",
+        "icon": "pipeline",
+        "pages": [
+            {
+                "label": "Overview",
+                "path": "views/weather_pipeline.py",
+                "route": "/weather_pipeline",
+                "url_path": "weather_pipeline",
+            },
+        ],
+    },
+    {
         "name": "Job Market Intelligence",
         "type": "Data Engineering",
         "icon": "pipeline",
