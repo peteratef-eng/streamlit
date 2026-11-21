@@ -125,7 +125,8 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
 
         .block-container {{
             max-width: 1220px;
-            padding: .35rem 1.35rem 2.5rem;
+            /* Keep content below Streamlit's fixed toolbar, including hosted controls. */
+            padding: 4.5rem 1.35rem 2.5rem;
         }}
 
         h1, h2, h3, h4 {{
@@ -157,15 +158,10 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             outline-offset: 3px;
             border-radius: 6px;
         }}
-        [data-testid="stHeadingWithActionElements"] a,
-        h1 a, h2 a, h3 a {{
-            opacity: 0;
-            transition: opacity 140ms ease;
-        }}
-        [data-testid="stHeadingWithActionElements"]:hover a,
-        [data-testid="stHeadingWithActionElements"]:focus-within a,
-        h1:hover a, h2:hover a, h3:hover a {{
-            opacity: 1;
+        /* Hide only Streamlit's heading permalink controls, not content links. */
+        [data-testid="stHeadingWithActionElements"] [data-testid="stHeaderActionElements"],
+        [data-testid="stHeadingWithActionElements"] a.anchor-link {{
+            display: none !important;
         }}
 
         [data-testid="stSidebar"] {{
@@ -4114,7 +4110,7 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             .quality-metric-grid {{ grid-template-columns: 1fr; }}
         }}
         @media (max-width: 560px) {{
-            .block-container {{ padding: .35rem 1rem 2.5rem; }}
+            .block-container {{ padding: 4.5rem 1rem 2.5rem; }}
             .pipeline-architecture-viewport {{
                 overflow-x: visible;
                 padding: .25rem 0 .45rem;

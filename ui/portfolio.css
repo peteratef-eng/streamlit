@@ -203,7 +203,7 @@ a.pa-text-link { display: inline-flex; align-items: center; min-height: 44px; fo
 .stApp:has(.mn-home) [data-testid="stSidebar"], .stApp:has(.mn-project-index) [data-testid="stSidebar"] { background: #111C30 !important; border-color: #293A53 !important; }
 .stApp:has(.mn-home) [data-testid="stSidebar"] a, .stApp:has(.mn-project-index) [data-testid="stSidebar"] a { color: #B6C6DC !important; }
 .stApp:has(.mn-home) [data-testid="stSidebar"] .sidebar-project-card, .stApp:has(.mn-project-index) [data-testid="stSidebar"] .sidebar-project-card { background: #152238 !important; }
-.stApp:has(.mn-home) [data-testid="stMainBlockContainer"] { max-width: 1430px; padding-top: 58px; }
+.stApp:has(.mn-home) [data-testid="stMainBlockContainer"] { max-width: 1430px; padding-top: 4.5rem; }
 .mn-home, .mn-home * { box-sizing: border-box; }
 .mn-home { display: grid; grid-template-columns: minmax(250px,.8fr) minmax(0,1.35fr); gap: clamp(35px,5vw,86px); color: #ACBAD0; font-family: var(--font); }
 .mn-home a { text-decoration: none !important; }
@@ -279,7 +279,7 @@ a.pa-text-link { display: inline-flex; align-items: center; min-height: 44px; fo
     .mn-socials { display: inline-flex; margin: 0 0 0 30px; }
 }
 @media (max-width: 600px) {
-    .stApp:has(.mn-home) [data-testid="stMainBlockContainer"] { padding-top: 30px; }
+    .stApp:has(.mn-home) [data-testid="stMainBlockContainer"] { padding-top: 4.5rem; }
     .mn-person { margin-bottom: 23px; }
     .mn-identity h1 { font-size: 47px !important; }
     .mn-role { font-size: 19px !important; }
