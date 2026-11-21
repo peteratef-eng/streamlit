@@ -1,0 +1,712 @@
+diff --git a/tests/test_project_cards.py b/tests/test_project_cards.py
+new file mode 100644
+index 0000000..3788aaa
+--- /dev/null
++++ b/tests/test_project_cards.py
+@@ -0,0 +1,48 @@
++from __future__ import annotations
++
++import unittest
++
++from portfolio.content.projects import PROJECTS
++from ui.project_cards import project_card_html
++
++
++class ProjectCardTest(unittest.TestCase):
++    def test_weather_is_case_study_not_live_demo(self) -> None:
++        weather = next(project for project in PROJECTS if project["slug"] == "weather-forecast-data-platform")
++        markup = project_card_html(weather)
++        self.assertIn('href="./weather_pipeline"', markup)
++        self.assertIn("View case study", markup)
++        self.assertNotIn("Live Demo", markup)
++        self.assertIn("Airflow: ingest", markup)
++        self.assertIn(weather["repository_url"], markup)
++
++    def test_job_market_map_does_not_imply_dbt_dashboard_feed(self) -> None:
++        job = next(project for project in PROJECTS if project["slug"] == "job-market-intelligence")
++        markup = project_card_html(job)
++        self.assertIn("separate CSV dashboard", markup)
++        self.assertIn('href="./project_overview"', markup)
++        self.assertIn('href="./market_dashboard"', markup)
++        self.assertNotIn("Airflow", markup)
++
++    def test_text_and_link_attributes_are_escaped(self) -> None:
++        project = {"title": '<script>alert("x")</script>', "short_description": "A & B", "demo_url": '/test?x="quote"'}
++        markup = project_card_html(project)
++        self.assertNotIn("<script>", markup)
++        self.assertIn("&lt;script&gt;", markup)
++        self.assertIn("A &amp; B", markup)
++        self.assertIn("&quot;quote&quot;", markup)
++
++    def test_all_projects_render_compact_and_full(self) -> None:
++        for project in PROJECTS:
++            for compact in (False, True):
++                with self.subTest(slug=project["slug"], compact=compact):
++                    markup = project_card_html(project, compact=compact)
++                    self.assertTrue(markup.startswith('<article class="pa-project'))
++                    self.assertTrue(markup.endswith("</article>"))
++                    self.assertIn("Source code", markup)
++                    self.assertNotIn("Project preview", markup)
++                    self.assertNotIn(">DATA<", markup)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/ui/components.py b/ui/components.py
+index 709a4db..be0e136 100644
+--- a/ui/components.py
++++ b/ui/components.py
+@@ -474,56 +474,10 @@ def _project_pipeline_visual() -> str:
+     )
+ 
+ 
+-def project_card(project: dict, *, actions: bool = False, featured: bool = False) -> None:
+-    tech_markup = "".join(
+-        f'<span class="meta-pill">{html.escape(tech)}</span>' for tech in project.get("technologies", [])[:6]
+-    )
+-    action_markup = ""
+-    if actions:
+-        demo_label = html.escape(project.get("demo_label", "Live Demo"))
+-        demo_url = project.get("demo_url") or "/market_dashboard"
+-        repository_url = project.get("repository_url", "")
+-        repository_link = (
+-            f'<a class="project-action" href="{html.escape(repository_url)}" rel="noopener noreferrer">GitHub Repository</a>'
+-            if repository_url
+-            else ""
+-        )
+-        case_study_route = project.get("case_study_route", "")
+-        case_study_link = (
+-            ""
+-            if not case_study_route or featured
+-            else f'<a class="project-action project-action-primary" href="{route_href(case_study_route)}" target="_self">View Case Study</a>'
+-        )
+-        demo_class = "project-action project-action-primary" if not case_study_link else "project-action"
+-        demo_target_attr = ' target="_self"' if demo_url.startswith("/") else ""
+-        demo_href = route_href(demo_url) if demo_url.startswith("/") else demo_url
+-        action_markup = (
+-            '<div class="project-actions">'
+-            f'{case_study_link}'
+-            f'<a class="{demo_class}" href="{html.escape(demo_href)}"{demo_target_attr}>{demo_label}</a>'
+-            f'{repository_link}'
+-            '</div>'
+-        )
+-    card_class = "project-card project-card-featured" if featured else "project-card"
+-    visual_markup = (
+-        _project_pipeline_visual()
+-        if featured and project.get("slug") == "job-market-intelligence"
+-        else '<div class="project-visual">DATA</div>'
+-    )
+-    st.markdown(
+-        f"""
+-        <div class="{card_class}">
+-            {visual_markup}
+-            <div class="project-meta">{html.escape(project.get("category", ""))} | {html.escape(project.get("status", ""))}</div>
+-            <div class="project-title">{html.escape(project["title"])}</div>
+-            <div class="section-copy">{html.escape(project["short_description"])}</div>
+-            <div class="project-metric">{html.escape(project.get("key_metric", ""))}</div>
+-            <div>{tech_markup}</div>
+-            {action_markup}
+-        </div>
+-        """,
+-        unsafe_allow_html=True,
+-    )
++def project_card(project: dict, *, actions: bool = False, featured: bool = False, index: int = 1) -> None:
++    from ui.project_cards import project_card_html
++
++    st.markdown(project_card_html(project, index=index, compact=True), unsafe_allow_html=True)
+ 
+ 
+ def _experience_card_html(entry: dict, class_name: str = "") -> str:
+diff --git a/ui/portfolio.css b/ui/portfolio.css
+new file mode 100644
+index 0000000..9da535b
+--- /dev/null
++++ b/ui/portfolio.css
+@@ -0,0 +1,127 @@
++/* Portfolio editorial layer. Scoped classes keep analytical views unchanged. */
++.pa-hero, .pa-focus, .pa-section-heading, .pa-project, .pa-about, .pa-contact, .pa-footer {
++    font-family: var(--font); color: var(--text); box-sizing: border-box;
++}
++.pa-hero *, .pa-project *, .pa-about *, .pa-contact * { box-sizing: border-box; }
++.pa-hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(230px, .8fr); gap: clamp(28px, 5vw, 76px); align-items: center; padding: 36px 0 28px; }
++.pa-eyebrow { font-size: 11px !important; font-weight: 700 !important; line-height: 1.6 !important; letter-spacing: .14em; margin: 0 0 24px !important; color: var(--accent) !important; }
++.pa-hero .pa-eyebrow { display: flex; align-items: center; gap: 9px; }
++.pa-hero .pa-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
++.pa-hero h1 { font-size: clamp(44px, 4.4vw, 74px) !important; line-height: 1.03 !important; font-weight: 700 !important; letter-spacing: -.05em !important; margin: 0 0 26px !important; padding: 0 !important; color: var(--text) !important; }
++.pa-heading-dot { color: var(--accent); }
++.pa-hero-lead { max-width: 560px; font-size: clamp(18px, 1.5vw, 22px) !important; line-height: 1.5 !important; margin: 0 0 14px !important; color: var(--text) !important; }
++.pa-hero-context { max-width: 510px; font-size: 15px !important; line-height: 1.65 !important; color: var(--text-2) !important; margin: 0 !important; }
++.pa-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0; }
++a.pa-button { min-height: 44px; padding: 12px 18px; display: inline-flex; align-items: center; justify-content: center; gap: 18px; border-radius: 6px; font-size: 14px !important; line-height: 20px; font-weight: 600; text-decoration: none !important; transition: background .15s, box-shadow .15s; border: 1px solid transparent; }
++a.pa-button-copper { background: var(--accent); color: white !important; }
++a.pa-button-copper:hover { background: var(--accent-hover); }
++a.pa-button-ink { background: var(--text); color: white !important; }
++a.pa-button-ink:hover { background: var(--accent-bright); }
++a.pa-button-outline { background: transparent; border-color: var(--border); color: var(--text) !important; }
++a.pa-button-outline:hover { background: var(--surface); border-color: var(--text-2); }
++.pa-button:focus-visible, .pa-text-link:focus-visible, .pa-profile-links a:focus-visible, .pa-footer a:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
++.pa-hero-stack { display: flex; align-items: flex-start; gap: 15px; padding-top: 4px; }
++.pa-hero-stack > span { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .1em; padding-top: 4px; white-space: nowrap; }
++.pa-hero-stack > div { display: flex; flex-wrap: wrap; gap: 5px 14px; }
++.pa-hero-stack > div span { font-size: 13px; color: var(--text-2); font-weight: 600; }
++.pa-profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 14px 32px rgba(22,33,46,.05); max-width: 360px; width: 100%; justify-self: end; }
++.pa-portrait { aspect-ratio: 1.2; overflow: hidden; position: relative; background: var(--surface-2); }
++.pa-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 32%; display: block; }
++.pa-photo-caption { position: absolute; bottom: 12px; left: 14px; background: rgba(255,255,255,.94); color: var(--text); font-size: 9px; letter-spacing: .12em; font-weight: 700; padding: 6px 9px; border-radius: 3px; }
++.pa-profile-info { padding: 20px 22px 18px; }
++.pa-profile-info .pa-availability { display: flex; gap: 7px; align-items: center; font-size: 12px !important; color: #286650 !important; font-weight: 600; margin: 0 0 14px !important; }
++.pa-availability > span { width: 6px; height: 6px; border-radius: 50%; background: #286650; }
++.pa-profile-info h2 { margin: 0 0 4px !important; padding: 0 !important; line-height: 1.15 !important; font-size: 27px !important; font-weight: 700 !important; letter-spacing: -.025em; }
++.pa-profile-info > p { color: var(--text-2); font-size: 14px !important; margin: 0 !important; }
++.pa-profile-links { display: flex; justify-content: space-between; gap: 12px; padding-top: 17px; margin-top: 18px; border-top: 1px solid var(--border); }
++.pa-profile-links a { color: var(--text) !important; font-size: 12px; font-weight: 600; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
++.pa-profile-links a:hover, a.pa-text-link:hover, .pa-footer a:hover { color: var(--accent) !important; text-decoration: underline; }
++.pa-focus { display: flex; gap: 24px; align-items: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 17px 0; margin: 18px 0 16px; }
++.pa-focus-label { white-space: nowrap; font-size: 10px; font-weight: 700; letter-spacing: .1em; color: var(--accent); }
++.pa-focus p { margin: 0 !important; font-size: 13px !important; line-height: 1.6; color: var(--text-2); }
++.pa-section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; padding: 34px 0 20px; }
++.pa-section-heading .pa-eyebrow { margin-bottom: 9px !important; }
++.pa-section-heading h2, .pa-about h2, .pa-contact h2 { font-size: clamp(25px, 2.8vw, 36px) !important; line-height: 1.2 !important; letter-spacing: -.035em !important; font-weight: 600 !important; margin: 0 !important; padding: 0 !important; }
++.pa-section-heading > p { font-size: 13px !important; color: var(--text-2); margin: 0 0 4px !important; max-width: 180px; }
++.pa-project { display: grid; grid-template-columns: minmax(220px, .78fr) minmax(0, 1.22fr); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); margin: 0 0 20px; box-shadow: 0 4px 14px rgba(22,33,46,.025); }
++.pa-project-map { min-width: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; background: #192b36; color: #f5f4ee; background-image: radial-gradient(rgba(255,255,255,.09) .7px, transparent .7px); background-size: 14px 14px; }
++.pa-map-top { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .13em; color: #c4d1d5; font-weight: 600; gap: 16px; }
++.pa-map-top > span:last-child { color: #e3b982; }
++.pa-map-flow { display: flex; flex-direction: column; align-items: stretch; width: 90%; margin: 20px auto; }
++.pa-map-node { display: flex; align-items: center; gap: 16px; font-size: 15px; font-weight: 600; border: 1px solid #61737a; background: #213944; border-radius: 5px; padding: 11px 14px; }
++.pa-map-node > span { font-size: 10px; color: #bdcbc9; font-family: monospace; }
++.pa-map-node:last-child { border-color: #a8bdb2; background: #2e4c4d; }
++.pa-map-arrow { color: #91aaa9; text-align: center; font-size: 16px; line-height: 23px; }
++.pa-map-note { color: #c4d1d5 !important; font-size: 11px !important; line-height: 1.6 !important; margin: 0 !important; border-top: 1px solid #455a62; padding-top: 12px; }
++.pa-project-body { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; padding: 27px 30px; }
++.pa-project-category { font-size: 11px; letter-spacing: .09em; color: var(--accent); font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; text-transform: uppercase; margin-bottom: 13px; }
++.pa-project-category span { font-size: 10px; padding: 3px 7px; border: 1px solid var(--border); color: var(--text-2); letter-spacing: .04em; border-radius: 4px; font-weight: 600; }
++.pa-project-title { font-size: clamp(23px, 2.3vw, 30px) !important; line-height: 1.15 !important; font-weight: 600 !important; letter-spacing: -.035em !important; margin: 0 0 12px !important; padding: 0 !important; color: var(--text) !important; }
++.pa-project-description { font-size: 14px !important; line-height: 1.65 !important; color: var(--text-2) !important; margin: 0 0 14px !important; }
++.pa-project-metric { font-size: 13px !important; line-height: 1.5; color: var(--text) !important; font-weight: 600; margin: 0 0 13px !important; }
++.pa-tags { display: flex; flex-wrap: wrap; gap: 6px; }
++.pa-tags span { font-size: 12px; line-height: 1.4; border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; color: var(--text-2); background: var(--bg); }
++.pa-project-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 19px; padding-top: 23px; margin-top: auto; }
++.pa-project-actions .pa-button { font-size: 12px !important; padding: 9px 13px; gap: 14px; }
++a.pa-text-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; font-weight: 600; color: var(--text-2) !important; text-decoration: none; }
++.pa-project-compact { display: flex; flex-direction: column; }
++.pa-project-compact .pa-map-flow { width: 80%; }
++.pa-project-compact .pa-project-body { padding: 24px; }
++.pa-project-compact .pa-project-title { font-size: 25px !important; }
++.pa-about { display: grid; grid-template-columns: 1fr 1.5fr; gap: 50px; padding: 44px 0; margin-top: 16px; border-top: 1px solid var(--border); }
++.pa-about .pa-eyebrow { margin-bottom: 15px !important; }
++.pa-about-copy > p { font-size: 16px !important; line-height: 1.75 !important; color: var(--text-2); margin: 0 0 22px !important; }
++.pa-contact { display: flex; justify-content: space-between; align-items: center; gap: 25px; padding: 30px; border: 1px solid var(--border); background: #edeae3; border-radius: 8px; margin: 8px 0 24px; }
++.pa-contact .pa-eyebrow { margin-bottom: 9px !important; }
++.pa-contact h2 { font-size: 27px !important; max-width: 500px; }
++.pa-contact .pa-button { flex-shrink: 0; }
++.pa-footer { display: flex; justify-content: space-between; gap: 15px; padding: 8px 0 24px; font-size: 11px; color: var(--muted); }
++.pa-footer a { color: var(--text-2) !important; text-decoration: none; }
++@media (max-width: 1100px) {
++    .pa-hero { gap: 28px; grid-template-columns: minmax(0, 1.25fr) minmax(220px, .8fr); }
++    .pa-hero h1 { font-size: 50px !important; }
++    .pa-project { grid-template-columns: minmax(190px, .8fr) minmax(0, 1.2fr); }
++    .pa-project-body { padding: 24px; }
++    .pa-project-map { padding: 20px; }
++    .pa-map-flow { width: 100%; }
++}
++@media (max-width: 760px) {
++    .pa-hero { grid-template-columns: 1fr; padding-top: 32px; gap: 30px; }
++    .pa-hero h1 { font-size: clamp(43px, 8.5vw, 60px) !important; }
++    .pa-hero .pa-eyebrow { font-size: 10px !important; margin-bottom: 20px !important; }
++    .pa-hero-lead { font-size: 19px !important; }
++    .pa-hero-context { font-size: 14px !important; }
++    .pa-hero-actions { gap: 9px; margin: 24px 0; }
++    .pa-hero-actions .pa-button { flex: 1 1 145px; gap: 10px; padding: 11px; font-size: 13px !important; }
++    .pa-profile-card { max-width: none; display: grid; grid-template-columns: minmax(100px, .8fr) minmax(0, 1.2fr); }
++    .pa-portrait { aspect-ratio: auto; min-height: 210px; }
++    .pa-photo-caption { left: 8px; bottom: 8px; font-size: 7px; padding: 5px; }
++    .pa-profile-info { padding: 20px 16px 12px; }
++    .pa-profile-info h2 { font-size: 24px !important; }
++    .pa-profile-info > p { font-size: 12px !important; }
++    .pa-profile-info .pa-availability { font-size: 10px !important; line-height: 1.4; }
++    .pa-profile-links { flex-wrap: wrap; gap: 0 13px; margin-top: 14px; padding-top: 8px; }
++    .pa-profile-links a { font-size: 11px; min-height: 44px; }
++    .pa-focus { align-items: flex-start; flex-direction: column; gap: 6px; margin-top: 2px; }
++    .pa-focus p { font-size: 12px !important; }
++    .pa-section-heading { display: block; padding-top: 24px; }
++    .pa-section-heading > p { max-width: none; margin-top: 10px !important; }
++    .pa-section-heading h2 { font-size: 29px !important; }
++    .pa-project { display: flex; flex-direction: column; }
++    .pa-project-map { padding: 20px; }
++    .pa-map-flow { width: 80%; margin: 18px auto; }
++    .pa-map-node { font-size: 14px; padding: 9px 12px; }
++    .pa-map-arrow { line-height: 19px; }
++    .pa-project-body, .pa-project-compact .pa-project-body { padding: 23px 20px; }
++    .pa-project-title { font-size: 26px !important; }
++    .pa-project-actions { gap: 6px 16px; padding-top: 20px; width: 100%; }
++    .pa-project-actions .pa-button { flex: 1 1 100%; justify-content: space-between; }
++    .pa-about { grid-template-columns: 1fr; gap: 22px; padding: 32px 0; }
++    .pa-about h2 br { display: none; }
++    .pa-about-copy > p { font-size: 15px !important; }
++    .pa-contact { display: block; padding: 23px 20px; }
++    .pa-contact h2 { font-size: 26px !important; }
++    .pa-contact .pa-button { margin-top: 24px; width: 100%; justify-content: space-between; }
++    .pa-footer { flex-direction: column; gap: 5px; }
++}
++@media (prefers-reduced-motion: reduce) { .pa-button { transition: none !important; } }
+diff --git a/ui/project_cards.py b/ui/project_cards.py
+new file mode 100644
+index 0000000..8fa5674
+--- /dev/null
++++ b/ui/project_cards.py
+@@ -0,0 +1,57 @@
++from __future__ import annotations
++
++import html
++
++from ui.navigation import route_href
++
++
++PREVIEW_STAGES = {
++    "weather-forecast-data-platform": ("Open-Meteo API", "PostgreSQL", "dbt marts"),
++    "job-market-intelligence": ("Raw data", "PostgreSQL", "dbt marts"),
++    "ecommerce-sales-analysis": ("Raw CSV", "Pandas", "Result tables"),
++}
++PREVIEW_NOTES = {
++    "weather-forecast-data-platform": "Airflow: ingest → model → test",
++    "job-market-intelligence": "Warehouse path · separate CSV dashboard",
++    "ecommerce-sales-analysis": "Data quality before aggregation",
++}
++
++
++def project_card_html(project: dict, *, index: int = 1, compact: bool = False) -> str:
++    """Render an escaped project card, with an implementation map, not live telemetry."""
++    slug = project.get("slug", "")
++    stages = PREVIEW_STAGES.get(slug, tuple(project.get("technologies", [])[:3]))
++    nodes = '<span class="pa-map-arrow" aria-hidden="true">↓</span>'.join(
++        f'<span class="pa-map-node"><span>{number:02}</span>{html.escape(label)}</span>'
++        for number, label in enumerate(stages, 1)
++    )
++    tags = "".join(f'<span>{html.escape(item)}</span>' for item in project.get("technologies", [])[:6])
++    demo_url = project.get("demo_url") or "/market_dashboard"
++    case_url = project.get("case_study_route") or demo_url
++    primary_url = route_href(case_url) if case_url.startswith("/") else case_url
++    primary_label = "View case study" if project.get("case_study_route") or project.get("demo_label") else "Explore dashboard"
++    secondary = ""
++    if demo_url != case_url:
++        href = route_href(demo_url) if demo_url.startswith("/") else demo_url
++        secondary = f'<a class="pa-text-link" href="{html.escape(href, quote=True)}" target="_self">Dashboard ↗</a>'
++    repository = project.get("repository_url", "")
++    source = (
++        f'<a class="pa-text-link" href="{html.escape(repository, quote=True)}" target="_blank" rel="noopener noreferrer">Source code ↗</a>'
++        if repository else ""
++    )
++    classes = "pa-project pa-project-compact" if compact else "pa-project"
++    return (
++        f'<article class="{classes}">'
++        '<div class="pa-project-map">'
++        f'<div class="pa-map-top"><span>IMPLEMENTATION MAP</span><span>{index:02}</span></div>'
++        f'<div class="pa-map-flow">{nodes}</div>'
++        f'<p class="pa-map-note">{html.escape(PREVIEW_NOTES.get(slug, "Project workflow"))}</p>'
++        '</div><div class="pa-project-body">'
++        f'<div class="pa-project-category">{html.escape(project.get("category", ""))}<span>{html.escape(project.get("status", ""))}</span></div>'
++        f'<h2 class="pa-project-title">{html.escape(project["title"])}</h2>'
++        f'<p class="pa-project-description">{html.escape(project["short_description"])}</p>'
++        f'<p class="pa-project-metric">{html.escape(project.get("key_metric", ""))}</p>'
++        f'<div class="pa-tags">{tags}</div>'
++        f'<div class="pa-project-actions"><a class="pa-button pa-button-ink" href="{html.escape(primary_url, quote=True)}" target="_self">{primary_label} <span aria-hidden="true">↗</span></a>{secondary}{source}</div>'
++        '</div></article>'
++    )
+diff --git a/ui/styles.py b/ui/styles.py
+index 1597cba..2a35d82 100644
+--- a/ui/styles.py
++++ b/ui/styles.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
+ import re
++from pathlib import Path
+ 
+ import streamlit as st
+ 
+@@ -4306,4 +4307,5 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
+         </style>
+         """
+     )
+-    return _minify_css(css)
++    portfolio_css = Path(__file__).with_name("portfolio.css").read_text(encoding="utf-8")
++    return _minify_css(css + "<style>" + portfolio_css + "</style>")
+diff --git a/views/home.py b/views/home.py
+index 9135497..a06fcb9 100644
+--- a/views/home.py
++++ b/views/home.py
+@@ -3,296 +3,89 @@ from __future__ import annotations
+ import base64
+ import html
+ from pathlib import Path
+-from textwrap import dedent
+-from html.parser import HTMLParser
+ 
+ import streamlit as st
+ 
+-from dashboard.data_loader import load_dashboard_metadata
+-from portfolio.content.profile import PROFILE
++from portfolio.content.profile import PROFILE, SPECIALTIES
+ from portfolio.content.projects import PROJECTS
+-from portfolio.content.skills import SKILL_GROUPS
+ from ui.navigation import route_href
+-from ui.theme import current_theme
+-
+-
+-theme = current_theme()
++from ui.project_cards import project_card_html
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-HERO_PHOTO_PATH = ROOT / "assets" / "profile" / "peter-atef-hero.jpg"
+-RESUME_PATH = ROOT / PROFILE["resume_path"]
+ 
+ 
+ @st.cache_data(show_spinner=False)
+ def asset_data_uri(path_value: str, mime_type: str) -> str:
+     path = Path(path_value)
+-    if not path.exists():
++    if not path.is_file():
+         return ""
+-    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+-    return f"data:{mime_type};base64,{encoded}"
+-
+-
+-def format_int(value: int | str | None) -> str:
+-    return f"{value:,}" if isinstance(value, int) else html.escape(str(value or "Verified"))
+-
+-
+-class _MarkupStructureValidator(HTMLParser):
+-    VOID_TAGS = {
+-        "area",
+-        "base",
+-        "br",
+-        "col",
+-        "embed",
+-        "hr",
+-        "img",
+-        "input",
+-        "link",
+-        "meta",
+-        "param",
+-        "source",
+-        "track",
+-        "wbr",
+-    }
+-
+-    def __init__(self) -> None:
+-        super().__init__()
+-        self.stack: list[str] = []
+-
+-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+-        if tag not in self.VOID_TAGS:
+-            self.stack.append(tag)
++    return f"data:{mime_type};base64,{base64.b64encode(path.read_bytes()).decode('ascii')}"
+ 
+-    def handle_endtag(self, tag: str) -> None:
+-        if not self.stack or self.stack[-1] != tag:
+-            expected = self.stack[-1] if self.stack else "none"
+-            raise ValueError(f"Unexpected closing tag </{tag}>; expected </{expected}>.")
+-        self.stack.pop()
+ 
++def render_html(markup: str) -> None:
++    """Keep HTML out of Markdown code blocks without changing its text content."""
++    st.markdown("\n".join(line.strip() for line in markup.splitlines()), unsafe_allow_html=True)
+ 
+-def validate_html_fragment(markup: str, *, expected_start: str, expected_end: str) -> None:
+-    if markup != markup.strip():
+-        raise ValueError("HTML fragment contains leading or trailing whitespace.")
+-    if not markup.startswith(expected_start) or not markup.endswith(expected_end):
+-        raise ValueError("HTML fragment does not start and end with the expected wrapper.")
+-    if "```" in markup or "&lt;" in markup:
+-        raise ValueError("HTML fragment contains Markdown fences or escaped HTML.")
+-    parser = _MarkupStructureValidator()
+-    parser.feed(markup)
+-    parser.close()
+-    if parser.stack:
+-        raise ValueError(f"Unclosed HTML tags: {parser.stack}.")
+ 
+-
+-def collapse_html_fragment(markup: str) -> str:
+-    return " ".join(line.strip() for line in markup.splitlines() if line.strip())
+-
+-
+-metadata = load_dashboard_metadata()
+-source_rows = metadata.get("source_job_postings_rows")
+-
+-resume_href = asset_data_uri(str(RESUME_PATH), "application/pdf")
+-resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume_href else ""
+-resume_link = resume_href or html.escape(PROFILE["resume_path"])
++photo = asset_data_uri(str(ROOT / "assets/profile/peter-atef-hero.jpg"), "image/jpeg")
++resume = asset_data_uri(str(ROOT / PROFILE["resume_path"]), "application/pdf")
++resume_href = resume or html.escape(PROFILE["resume_path"], quote=True)
++resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume else ""
+ contact_href = route_href("/contact")
+-project_overview_href = route_href("/weather_pipeline")
+-hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
+-stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
+-hero_photo_markup = (
+-    f'<img class="hero-profile-image" src="{hero_photo_src}" alt="Portrait of Peter Atef, Junior Data Engineer">'
+-    if hero_photo_src
+-    else '<div class="hero-photo-fallback" aria-label="Peter Atef portrait">PA</div>'
++weather_href = route_href("/weather_pipeline")
++portrait = (
++    f'<img src="{photo}" alt="Peter Atef" width="400" height="400">'
++    if photo else '<span class="pa-portrait-fallback">PA</span>'
+ )
+-
+-
+-st.markdown(
+-    f"""
+-    <section class="portfolio-hero data-command-hero">
+-        <div class="data-blueprint-grid" aria-hidden="true"></div>
+-        <div class="data-background-path data-background-path-1" aria-hidden="true"></div>
+-        <div class="data-background-path data-background-path-2" aria-hidden="true"></div>
+-        <span class="data-background-particle data-background-particle-1" aria-hidden="true"></span>
+-        <span class="data-background-particle data-background-particle-2" aria-hidden="true"></span>
+-        <div class="hero-copy">
+-            <div class="hero-kicker">Hi, I'm Peter Atef</div>
+-            <h1>Junior Data Engineer</h1>
+-            <p class="hero-description">{html.escape(PROFILE["hero_subtitle"])}</p>
+-            <p class="hero-description hero-description-secondary">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
+-            <div class="hero-actions">
+-                <a class="portfolio-button portfolio-button-primary hero-primary-action" href="{project_overview_href}" target="_self">EXPLORE MY PROJECT<span aria-hidden="true">&#8594;</span></a>
+-                <a class="portfolio-button" href="{resume_link}"{resume_attr}>DOWNLOAD RESUME</a>
+-                <a class="portfolio-button portfolio-button-quiet" href="{contact_href}" target="_self">CONTACT ME</a>
+-            </div>
+-            <div class="hero-status-line">
+-                <span class="hero-status-dot" aria-hidden="true"></span>
+-                {html.escape(PROFILE["current_focus_status"])}
+-            </div>
++stack = "".join(f"<span>{html.escape(item)}</span>" for item in SPECIALTIES[:5])
++
++render_html(f'''
++<section class="pa-hero">
++    <div class="pa-hero-copy">
++        <p class="pa-eyebrow"><span></span> PETER ATEF / DATA PORTFOLIO</p>
++        <h1>Junior<br>Data Engineer<span class="pa-heading-dot">.</span></h1>
++        <p class="pa-hero-lead">{html.escape(PROFILE["hero_subtitle"])}</p>
++        <p class="pa-hero-context">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
++        <div class="pa-hero-actions">
++            <a class="pa-button pa-button-copper pa-hero-primary" href="{weather_href}" target="_self">Explore my work <span aria-hidden="true">↗</span></a>
++            <a class="pa-button pa-button-outline" href="{resume_href}"{resume_attr}>Download resume <span aria-hidden="true">↓</span></a>
+         </div>
+-        <article class="hero-profile-card">
+-            <div class="hero-profile-media">
+-                <div class="hero-profile-image-wrap">
+-                    {hero_photo_markup}
+-                </div>
++        <div class="pa-hero-stack"><span>CORE STACK</span><div>{stack}</div></div>
++    </div>
++    <aside class="pa-profile-card" aria-label="Peter Atef profile">
++        <div class="pa-portrait">{portrait}<span class="pa-photo-caption">BASED IN {html.escape(PROFILE["location"].upper())}</span></div>
++        <div class="pa-profile-info">
++            <p class="pa-availability"><span></span>Open to opportunities</p>
++            <h2>{html.escape(PROFILE["full_name"])}</h2>
++            <p>{html.escape(PROFILE["title"])}</p>
++            <div class="pa-profile-links">
++                <a href="{html.escape(PROFILE["github_url"], quote=True)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
++                <a href="{html.escape(PROFILE["linkedin_url"], quote=True)}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
++                <a href="{contact_href}" target="_self">Contact ↗</a>
+             </div>
+-            <div class="hero-profile-identity hero-profile-info">
+-                <div class="hero-profile-meta">
+-                    <span class="hero-profile-status">
+-                        <span class="hero-profile-status-dot" aria-hidden="true"></span>
+-                        Open to opportunities
+-                    </span>
+-                    <span class="hero-profile-location">
+-                        {html.escape(PROFILE["location"])}
+-                    </span>
+-                </div>
+-                <div class="hero-profile-stack" aria-label="Core stack">{stack_chips}</div>
+-                <div class="hero-profile-links">
+-                    <a href="{html.escape(PROFILE["linkedin_url"])}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+-                    <a href="{html.escape(PROFILE["github_url"])}" target="_blank" rel="noopener noreferrer">GitHub</a>
+-                </div>
+-            </div>
+-        </article>
+-    </section>
+-    """,
+-    unsafe_allow_html=True,
+-)
+-
+-about_cards = [
+-    (
+-        "Professional Story",
+-        "After working across AI, NLP, data annotation leadership, quality assurance, and integration workflows, I moved deeper into Data Engineering. I enjoy building reliable pipelines, cleaning messy data, validating outputs, and turning raw records into analytics-ready models that teams can trust.",
+-    ),
+-    (
+-        "Current Focus",
+-        "I am targeting Junior Data Engineer opportunities where I can build dependable pipelines, improve data quality, and create models that make analysis easier for teams.",
+-    ),
+-]
+-about_markup = "".join(
+-    (
+-        '<div class="section-card home-about-card" tabindex="0">'
+-        f'<div class="section-title">{html.escape(title)}</div>'
+-        f'<div class="section-copy">{html.escape(body)}</div>'
+-        '</div>'
+-    )
+-    for title, body in about_cards
+-)
+-st.markdown(
+-    f"""
+-    <section class="home-section home-about-section">
+-        <div class="section-eyebrow">Professional Profile</div>
+-        <h2>About Me</h2>
+-        <div class="home-about-grid">{about_markup}</div>
+-    </section>
+-    """,
+-    unsafe_allow_html=True,
+-)
+-
+-skills_markup = "".join(
+-    (
+-        f'<div class="section-card home-skill-card home-skill-card-{index}" tabindex="0">'
+-        f'<div class="section-title">{html.escape(title)}</div>'
+-        '<div class="home-skill-badge-wrap">'
+-        + "".join(f'<span class="home-skill-badge">{html.escape(skill)}</span>' for skill in skills)
+-        + '</div>'
+-        '</div>'
+-    )
+-    for index, (title, skills) in enumerate(SKILL_GROUPS.items(), start=1)
+-)
+-st.markdown(
+-    f"""
+-    <section class="home-section home-skills-section">
+-        <div class="section-eyebrow">Workflow Skills</div>
+-        <h2>Skills</h2>
+-        <p class="home-section-copy">Grouped by the data engineering workflow areas demonstrated across my project and professional background.</p>
+-        <div class="home-skills-grid">{skills_markup}</div>
+-    </section>
+-    """,
+-    unsafe_allow_html=True,
+-)
+-
+-featured_projects = sorted(
+-    (item for item in PROJECTS if item.get("featured")),
+-    key=lambda item: item.get("sort_order", 999),
+-)
+-
+-for featured_project in featured_projects:
+-    tech_stack = " - ".join(featured_project["technologies"][:6])
+-    is_job_market = featured_project["slug"] == "job-market-intelligence"
+-    metric_label = (
+-        f"{format_int(source_rows)} source postings"
+-        if is_job_market
+-        else html.escape(featured_project.get("key_metric", ""))
+-    )
+-    alt_text = (
+-        "dbt lineage graph: staging models feed intermediate models and analytics marts"
+-        if is_job_market
+-        else f"{featured_project['title']} preview"
+-    )
+-    repository_button = (
+-        f'<a class="portfolio-button" href="{html.escape(featured_project["repository_url"])}" rel="noopener noreferrer">VIEW ON GITHUB</a>'
+-        if featured_project.get("repository_url")
+-        else ""
+-    )
+-    cover_src = (
+-        asset_data_uri(str(ROOT / featured_project["cover_image"]), "image/png")
+-        if featured_project.get("cover_image")
+-        else ""
+-    )
+-    preview_markup = (
+-        f'<img src="{cover_src}" alt="{html.escape(alt_text)}" loading="lazy">'
+-        if cover_src
+-        else '<div class="featured-preview-fallback">Project preview</div>'
+-    )
+-    demo_href = route_href(featured_project.get("demo_url") or "/projects")
+-    demo_label = html.escape(featured_project.get("demo_label", "VIEW LIVE PROJECT"))
+-
+-    featured_project_markup = (
+-        dedent(
+-            f"""
+-            <section class="featured-project-card" tabindex="0">
+-                <div class="featured-project-copy">
+-                    <div class="section-eyebrow">Featured Project</div>
+-                    <h2>{html.escape(featured_project["title"])}</h2>
+-                    <p>{html.escape(featured_project["case_study_sections"]["Business problem"])}</p>
+-                    <p>{html.escape(featured_project["case_study_sections"]["Project summary"])}</p>
+-                    <div class="featured-meta">
+-                        <span>{html.escape(tech_stack)}</span>
+-                        <span>{metric_label}</span>
+-                    </div>
+-                    <div class="hero-actions">
+-                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">{demo_label}</a>
+-                        {repository_button}
+-                    </div>
+-                </div>
+-                <div class="featured-preview">
+-            """
+-        ).strip()
+-        + "\n"
+-        + preview_markup
+-        + "\n"
+-        + dedent(
+-            """
+-                </div>
+-            </section>
+-            """
+-        ).strip()
+-    )
+-    featured_project_markup = collapse_html_fragment(featured_project_markup)
+-    validate_html_fragment(
+-        featured_project_markup,
+-        expected_start='<section class="featured-project-card"',
+-        expected_end="</section>",
+-    )
+-    st.markdown(featured_project_markup, unsafe_allow_html=True)
+-
+-st.markdown(
+-    f"""
+-    <section class="contact-cta home-contact-cta">
+-        <div>
+-            <p>Open to Junior Data Engineer opportunities.</p>
+-        </div>
+-        <div class="contact-cta-actions">
+-            <a class="portfolio-button portfolio-button-primary" href="{contact_href}" target="_self">CONTACT ME</a>
+         </div>
+-    </section>
+-    """,
+-    unsafe_allow_html=True,
+-)
++    </aside>
++</section>
++<div class="pa-focus"><span class="pa-focus-label">CURRENT FOCUS</span><p>{html.escape(PROFILE["current_focus_status"])}</p></div>
++<section class="pa-section-heading">
++    <div><p class="pa-eyebrow">01 / SELECTED WORK</p><h2>From raw data to useful models.</h2></div>
++    <p>Implementation, decisions, and source code.</p>
++</section>
++''')
++
++projects = sorted((project for project in PROJECTS if project.get("featured")), key=lambda project: project.get("sort_order", 999))
++for index, project in enumerate(projects, 1):
++    st.markdown(project_card_html(project, index=index), unsafe_allow_html=True)
++
++specialties = "".join(f"<span>{html.escape(item)}</span>" for item in SPECIALTIES)
++render_html(f'''
++<section class="pa-about">
++    <div><p class="pa-eyebrow">02 / BACKGROUND</p><h2>Quality first.<br> Then the pipeline.</h2></div>
++    <div class="pa-about-copy"><p>{html.escape(PROFILE["bio"])}</p><div class="pa-tags">{specialties}</div></div>
++</section>
++<section class="pa-contact">
++    <div><p class="pa-eyebrow">LET'S TALK</p><h2>Open to Junior Data Engineer opportunities.</h2></div>
++    <a class="pa-button pa-button-ink" href="{contact_href}" target="_self">Get in touch <span aria-hidden="true">↗</span></a>
++</section>
++<footer class="pa-footer"><span>{html.escape(PROFILE["full_name"])} / Data portfolio</span><a href="{html.escape(PROFILE["github_url"], quote=True)}" target="_blank" rel="noopener noreferrer">Built with Python & Streamlit ↗</a></footer>
++''')
+diff --git a/views/projects.py b/views/projects.py
+index 6fcc024..94c8f4f 100644
+--- a/views/projects.py
++++ b/views/projects.py
+@@ -13,6 +13,6 @@ if len(projects) == 1:
+ else:
+     for row_start in range(0, len(projects), 2):
+         columns = st.columns(2)
+-        for column, project in zip(columns, projects[row_start : row_start + 2]):
++        for column, (index, project) in zip(columns, enumerate(projects[row_start : row_start + 2], start=row_start + 1)):
+             with column:
+-                project_card(project, actions=True)
++                project_card(project, actions=True, index=index)

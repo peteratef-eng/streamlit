@@ -474,56 +474,10 @@ def _project_pipeline_visual() -> str:
     )
 
 
-def project_card(project: dict, *, actions: bool = False, featured: bool = False) -> None:
-    tech_markup = "".join(
-        f'<span class="meta-pill">{html.escape(tech)}</span>' for tech in project.get("technologies", [])[:6]
-    )
-    action_markup = ""
-    if actions:
-        demo_label = html.escape(project.get("demo_label", "Live Demo"))
-        demo_url = project.get("demo_url") or "/market_dashboard"
-        repository_url = project.get("repository_url", "")
-        repository_link = (
-            f'<a class="project-action" href="{html.escape(repository_url)}" rel="noopener noreferrer">GitHub Repository</a>'
-            if repository_url
-            else ""
-        )
-        case_study_route = project.get("case_study_route", "")
-        case_study_link = (
-            ""
-            if not case_study_route or featured
-            else f'<a class="project-action project-action-primary" href="{route_href(case_study_route)}" target="_self">View Case Study</a>'
-        )
-        demo_class = "project-action project-action-primary" if not case_study_link else "project-action"
-        demo_target_attr = ' target="_self"' if demo_url.startswith("/") else ""
-        demo_href = route_href(demo_url) if demo_url.startswith("/") else demo_url
-        action_markup = (
-            '<div class="project-actions">'
-            f'{case_study_link}'
-            f'<a class="{demo_class}" href="{html.escape(demo_href)}"{demo_target_attr}>{demo_label}</a>'
-            f'{repository_link}'
-            '</div>'
-        )
-    card_class = "project-card project-card-featured" if featured else "project-card"
-    visual_markup = (
-        _project_pipeline_visual()
-        if featured and project.get("slug") == "job-market-intelligence"
-        else '<div class="project-visual">DATA</div>'
-    )
-    st.markdown(
-        f"""
-        <div class="{card_class}">
-            {visual_markup}
-            <div class="project-meta">{html.escape(project.get("category", ""))} | {html.escape(project.get("status", ""))}</div>
-            <div class="project-title">{html.escape(project["title"])}</div>
-            <div class="section-copy">{html.escape(project["short_description"])}</div>
-            <div class="project-metric">{html.escape(project.get("key_metric", ""))}</div>
-            <div>{tech_markup}</div>
-            {action_markup}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+def project_card(project: dict, *, actions: bool = False, featured: bool = False, index: int = 1) -> None:
+    from ui.project_cards import project_card_html
+
+    st.markdown(project_card_html(project, index=index, compact=True), unsafe_allow_html=True)
 
 
 def _experience_card_html(entry: dict, class_name: str = "") -> str:

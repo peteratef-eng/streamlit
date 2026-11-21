@@ -13,6 +13,6 @@ if len(projects) == 1:
 else:
     for row_start in range(0, len(projects), 2):
         columns = st.columns(2)
-        for column, project in zip(columns, projects[row_start : row_start + 2]):
+        for column, (index, project) in zip(columns, enumerate(projects[row_start : row_start + 2], start=row_start + 1)):
             with column:
-                project_card(project, actions=True)
+                project_card(project, actions=True, index=index)

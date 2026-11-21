@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 import streamlit as st
 
@@ -4306,4 +4307,5 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
         </style>
         """
     )
-    return _minify_css(css)
+    portfolio_css = Path(__file__).with_name("portfolio.css").read_text(encoding="utf-8")
+    return _minify_css(css + "<style>" + portfolio_css + "</style>")

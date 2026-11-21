@@ -3,296 +3,89 @@ from __future__ import annotations
 import base64
 import html
 from pathlib import Path
-from textwrap import dedent
-from html.parser import HTMLParser
 
 import streamlit as st
 
-from dashboard.data_loader import load_dashboard_metadata
-from portfolio.content.profile import PROFILE
+from portfolio.content.profile import PROFILE, SPECIALTIES
 from portfolio.content.projects import PROJECTS
-from portfolio.content.skills import SKILL_GROUPS
 from ui.navigation import route_href
-from ui.theme import current_theme
-
-
-theme = current_theme()
+from ui.project_cards import project_card_html
 
 ROOT = Path(__file__).resolve().parents[1]
-HERO_PHOTO_PATH = ROOT / "assets" / "profile" / "peter-atef-hero.jpg"
-RESUME_PATH = ROOT / PROFILE["resume_path"]
 
 
 @st.cache_data(show_spinner=False)
 def asset_data_uri(path_value: str, mime_type: str) -> str:
     path = Path(path_value)
-    if not path.exists():
+    if not path.is_file():
         return ""
-    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
-    return f"data:{mime_type};base64,{encoded}"
+    return f"data:{mime_type};base64,{base64.b64encode(path.read_bytes()).decode('ascii')}"
 
 
-def format_int(value: int | str | None) -> str:
-    return f"{value:,}" if isinstance(value, int) else html.escape(str(value or "Verified"))
+def render_html(markup: str) -> None:
+    """Keep HTML out of Markdown code blocks without changing its text content."""
+    st.markdown("\n".join(line.strip() for line in markup.splitlines()), unsafe_allow_html=True)
 
 
-class _MarkupStructureValidator(HTMLParser):
-    VOID_TAGS = {
-        "area",
-        "base",
-        "br",
-        "col",
-        "embed",
-        "hr",
-        "img",
-        "input",
-        "link",
-        "meta",
-        "param",
-        "source",
-        "track",
-        "wbr",
-    }
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.stack: list[str] = []
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if tag not in self.VOID_TAGS:
-            self.stack.append(tag)
-
-    def handle_endtag(self, tag: str) -> None:
-        if not self.stack or self.stack[-1] != tag:
-            expected = self.stack[-1] if self.stack else "none"
-            raise ValueError(f"Unexpected closing tag </{tag}>; expected </{expected}>.")
-        self.stack.pop()
-
-
-def validate_html_fragment(markup: str, *, expected_start: str, expected_end: str) -> None:
-    if markup != markup.strip():
-        raise ValueError("HTML fragment contains leading or trailing whitespace.")
-    if not markup.startswith(expected_start) or not markup.endswith(expected_end):
-        raise ValueError("HTML fragment does not start and end with the expected wrapper.")
-    if "```" in markup or "&lt;" in markup:
-        raise ValueError("HTML fragment contains Markdown fences or escaped HTML.")
-    parser = _MarkupStructureValidator()
-    parser.feed(markup)
-    parser.close()
-    if parser.stack:
-        raise ValueError(f"Unclosed HTML tags: {parser.stack}.")
-
-
-def collapse_html_fragment(markup: str) -> str:
-    return " ".join(line.strip() for line in markup.splitlines() if line.strip())
-
-
-metadata = load_dashboard_metadata()
-source_rows = metadata.get("source_job_postings_rows")
-
-resume_href = asset_data_uri(str(RESUME_PATH), "application/pdf")
-resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume_href else ""
-resume_link = resume_href or html.escape(PROFILE["resume_path"])
+photo = asset_data_uri(str(ROOT / "assets/profile/peter-atef-hero.jpg"), "image/jpeg")
+resume = asset_data_uri(str(ROOT / PROFILE["resume_path"]), "application/pdf")
+resume_href = resume or html.escape(PROFILE["resume_path"], quote=True)
+resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume else ""
 contact_href = route_href("/contact")
-project_overview_href = route_href("/weather_pipeline")
-hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
-stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
-hero_photo_markup = (
-    f'<img class="hero-profile-image" src="{hero_photo_src}" alt="Portrait of Peter Atef, Junior Data Engineer">'
-    if hero_photo_src
-    else '<div class="hero-photo-fallback" aria-label="Peter Atef portrait">PA</div>'
+weather_href = route_href("/weather_pipeline")
+portrait = (
+    f'<img src="{photo}" alt="Peter Atef" width="400" height="400">'
+    if photo else '<span class="pa-portrait-fallback">PA</span>'
 )
+stack = "".join(f"<span>{html.escape(item)}</span>" for item in SPECIALTIES[:5])
 
-
-st.markdown(
-    f"""
-    <section class="portfolio-hero data-command-hero">
-        <div class="data-blueprint-grid" aria-hidden="true"></div>
-        <div class="data-background-path data-background-path-1" aria-hidden="true"></div>
-        <div class="data-background-path data-background-path-2" aria-hidden="true"></div>
-        <span class="data-background-particle data-background-particle-1" aria-hidden="true"></span>
-        <span class="data-background-particle data-background-particle-2" aria-hidden="true"></span>
-        <div class="hero-copy">
-            <div class="hero-kicker">Hi, I'm Peter Atef</div>
-            <h1>Junior Data Engineer</h1>
-            <p class="hero-description">{html.escape(PROFILE["hero_subtitle"])}</p>
-            <p class="hero-description hero-description-secondary">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
-            <div class="hero-actions">
-                <a class="portfolio-button portfolio-button-primary hero-primary-action" href="{project_overview_href}" target="_self">EXPLORE MY PROJECT<span aria-hidden="true">&#8594;</span></a>
-                <a class="portfolio-button" href="{resume_link}"{resume_attr}>DOWNLOAD RESUME</a>
-                <a class="portfolio-button portfolio-button-quiet" href="{contact_href}" target="_self">CONTACT ME</a>
-            </div>
-            <div class="hero-status-line">
-                <span class="hero-status-dot" aria-hidden="true"></span>
-                {html.escape(PROFILE["current_focus_status"])}
+render_html(f'''
+<section class="pa-hero">
+    <div class="pa-hero-copy">
+        <p class="pa-eyebrow"><span></span> PETER ATEF / DATA PORTFOLIO</p>
+        <h1>Junior<br>Data Engineer<span class="pa-heading-dot">.</span></h1>
+        <p class="pa-hero-lead">{html.escape(PROFILE["hero_subtitle"])}</p>
+        <p class="pa-hero-context">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
+        <div class="pa-hero-actions">
+            <a class="pa-button pa-button-copper pa-hero-primary" href="{weather_href}" target="_self">Explore my work <span aria-hidden="true">↗</span></a>
+            <a class="pa-button pa-button-outline" href="{resume_href}"{resume_attr}>Download resume <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="pa-hero-stack"><span>CORE STACK</span><div>{stack}</div></div>
+    </div>
+    <aside class="pa-profile-card" aria-label="Peter Atef profile">
+        <div class="pa-portrait">{portrait}<span class="pa-photo-caption">BASED IN {html.escape(PROFILE["location"].upper())}</span></div>
+        <div class="pa-profile-info">
+            <p class="pa-availability"><span></span>Open to opportunities</p>
+            <h2>{html.escape(PROFILE["full_name"])}</h2>
+            <p>{html.escape(PROFILE["title"])}</p>
+            <div class="pa-profile-links">
+                <a href="{html.escape(PROFILE["github_url"], quote=True)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                <a href="{html.escape(PROFILE["linkedin_url"], quote=True)}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                <a href="{contact_href}" target="_self">Contact ↗</a>
             </div>
         </div>
-        <article class="hero-profile-card">
-            <div class="hero-profile-media">
-                <div class="hero-profile-image-wrap">
-                    {hero_photo_markup}
-                </div>
-            </div>
-            <div class="hero-profile-identity hero-profile-info">
-                <div class="hero-profile-meta">
-                    <span class="hero-profile-status">
-                        <span class="hero-profile-status-dot" aria-hidden="true"></span>
-                        Open to opportunities
-                    </span>
-                    <span class="hero-profile-location">
-                        {html.escape(PROFILE["location"])}
-                    </span>
-                </div>
-                <div class="hero-profile-stack" aria-label="Core stack">{stack_chips}</div>
-                <div class="hero-profile-links">
-                    <a href="{html.escape(PROFILE["linkedin_url"])}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                    <a href="{html.escape(PROFILE["github_url"])}" target="_blank" rel="noopener noreferrer">GitHub</a>
-                </div>
-            </div>
-        </article>
-    </section>
-    """,
-    unsafe_allow_html=True,
-)
+    </aside>
+</section>
+<div class="pa-focus"><span class="pa-focus-label">CURRENT FOCUS</span><p>{html.escape(PROFILE["current_focus_status"])}</p></div>
+<section class="pa-section-heading">
+    <div><p class="pa-eyebrow">01 / SELECTED WORK</p><h2>From raw data to useful models.</h2></div>
+    <p>Implementation, decisions, and source code.</p>
+</section>
+''')
 
-about_cards = [
-    (
-        "Professional Story",
-        "After working across AI, NLP, data annotation leadership, quality assurance, and integration workflows, I moved deeper into Data Engineering. I enjoy building reliable pipelines, cleaning messy data, validating outputs, and turning raw records into analytics-ready models that teams can trust.",
-    ),
-    (
-        "Current Focus",
-        "I am targeting Junior Data Engineer opportunities where I can build dependable pipelines, improve data quality, and create models that make analysis easier for teams.",
-    ),
-]
-about_markup = "".join(
-    (
-        '<div class="section-card home-about-card" tabindex="0">'
-        f'<div class="section-title">{html.escape(title)}</div>'
-        f'<div class="section-copy">{html.escape(body)}</div>'
-        '</div>'
-    )
-    for title, body in about_cards
-)
-st.markdown(
-    f"""
-    <section class="home-section home-about-section">
-        <div class="section-eyebrow">Professional Profile</div>
-        <h2>About Me</h2>
-        <div class="home-about-grid">{about_markup}</div>
-    </section>
-    """,
-    unsafe_allow_html=True,
-)
+projects = sorted((project for project in PROJECTS if project.get("featured")), key=lambda project: project.get("sort_order", 999))
+for index, project in enumerate(projects, 1):
+    st.markdown(project_card_html(project, index=index), unsafe_allow_html=True)
 
-skills_markup = "".join(
-    (
-        f'<div class="section-card home-skill-card home-skill-card-{index}" tabindex="0">'
-        f'<div class="section-title">{html.escape(title)}</div>'
-        '<div class="home-skill-badge-wrap">'
-        + "".join(f'<span class="home-skill-badge">{html.escape(skill)}</span>' for skill in skills)
-        + '</div>'
-        '</div>'
-    )
-    for index, (title, skills) in enumerate(SKILL_GROUPS.items(), start=1)
-)
-st.markdown(
-    f"""
-    <section class="home-section home-skills-section">
-        <div class="section-eyebrow">Workflow Skills</div>
-        <h2>Skills</h2>
-        <p class="home-section-copy">Grouped by the data engineering workflow areas demonstrated across my project and professional background.</p>
-        <div class="home-skills-grid">{skills_markup}</div>
-    </section>
-    """,
-    unsafe_allow_html=True,
-)
-
-featured_projects = sorted(
-    (item for item in PROJECTS if item.get("featured")),
-    key=lambda item: item.get("sort_order", 999),
-)
-
-for featured_project in featured_projects:
-    tech_stack = " - ".join(featured_project["technologies"][:6])
-    is_job_market = featured_project["slug"] == "job-market-intelligence"
-    metric_label = (
-        f"{format_int(source_rows)} source postings"
-        if is_job_market
-        else html.escape(featured_project.get("key_metric", ""))
-    )
-    alt_text = (
-        "dbt lineage graph: staging models feed intermediate models and analytics marts"
-        if is_job_market
-        else f"{featured_project['title']} preview"
-    )
-    repository_button = (
-        f'<a class="portfolio-button" href="{html.escape(featured_project["repository_url"])}" rel="noopener noreferrer">VIEW ON GITHUB</a>'
-        if featured_project.get("repository_url")
-        else ""
-    )
-    cover_src = (
-        asset_data_uri(str(ROOT / featured_project["cover_image"]), "image/png")
-        if featured_project.get("cover_image")
-        else ""
-    )
-    preview_markup = (
-        f'<img src="{cover_src}" alt="{html.escape(alt_text)}" loading="lazy">'
-        if cover_src
-        else '<div class="featured-preview-fallback">Project preview</div>'
-    )
-    demo_href = route_href(featured_project.get("demo_url") or "/projects")
-    demo_label = html.escape(featured_project.get("demo_label", "VIEW LIVE PROJECT"))
-
-    featured_project_markup = (
-        dedent(
-            f"""
-            <section class="featured-project-card" tabindex="0">
-                <div class="featured-project-copy">
-                    <div class="section-eyebrow">Featured Project</div>
-                    <h2>{html.escape(featured_project["title"])}</h2>
-                    <p>{html.escape(featured_project["case_study_sections"]["Business problem"])}</p>
-                    <p>{html.escape(featured_project["case_study_sections"]["Project summary"])}</p>
-                    <div class="featured-meta">
-                        <span>{html.escape(tech_stack)}</span>
-                        <span>{metric_label}</span>
-                    </div>
-                    <div class="hero-actions">
-                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">{demo_label}</a>
-                        {repository_button}
-                    </div>
-                </div>
-                <div class="featured-preview">
-            """
-        ).strip()
-        + "\n"
-        + preview_markup
-        + "\n"
-        + dedent(
-            """
-                </div>
-            </section>
-            """
-        ).strip()
-    )
-    featured_project_markup = collapse_html_fragment(featured_project_markup)
-    validate_html_fragment(
-        featured_project_markup,
-        expected_start='<section class="featured-project-card"',
-        expected_end="</section>",
-    )
-    st.markdown(featured_project_markup, unsafe_allow_html=True)
-
-st.markdown(
-    f"""
-    <section class="contact-cta home-contact-cta">
-        <div>
-            <p>Open to Junior Data Engineer opportunities.</p>
-        </div>
-        <div class="contact-cta-actions">
-            <a class="portfolio-button portfolio-button-primary" href="{contact_href}" target="_self">CONTACT ME</a>
-        </div>
-    </section>
-    """,
-    unsafe_allow_html=True,
-)
+specialties = "".join(f"<span>{html.escape(item)}</span>" for item in SPECIALTIES)
+render_html(f'''
+<section class="pa-about">
+    <div><p class="pa-eyebrow">02 / BACKGROUND</p><h2>Quality first.<br> Then the pipeline.</h2></div>
+    <div class="pa-about-copy"><p>{html.escape(PROFILE["bio"])}</p><div class="pa-tags">{specialties}</div></div>
+</section>
+<section class="pa-contact">
+    <div><p class="pa-eyebrow">LET'S TALK</p><h2>Open to Junior Data Engineer opportunities.</h2></div>
+    <a class="pa-button pa-button-ink" href="{contact_href}" target="_self">Get in touch <span aria-hidden="true">↗</span></a>
+</section>
+<footer class="pa-footer"><span>{html.escape(PROFILE["full_name"])} / Data portfolio</span><a href="{html.escape(PROFILE["github_url"], quote=True)}" target="_blank" rel="noopener noreferrer">Built with Python & Streamlit ↗</a></footer>
+''')
