@@ -5,7 +5,7 @@ import streamlit as st
 from portfolio.content.projects import PROJECTS
 from ui.components import project_card
 
-st.title("Projects")
+st.markdown('<section class="mn-project-index"><h1>Selected work.</h1></section>', unsafe_allow_html=True)
 
 projects = sorted(PROJECTS, key=lambda item: item.get("sort_order", 999))
 if len(projects) == 1:

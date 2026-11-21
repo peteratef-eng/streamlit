@@ -8,7 +8,6 @@ import streamlit as st
 
 from portfolio.content.profile import PROFILE, SPECIALTIES
 from portfolio.content.projects import PROJECTS
-from ui.navigation import route_href
 from ui.project_cards import project_card_html
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,70 +21,43 @@ def asset_data_uri(path_value: str, mime_type: str) -> str:
     return f"data:{mime_type};base64,{base64.b64encode(path.read_bytes()).decode('ascii')}"
 
 
-def render_html(markup: str) -> None:
-    """Keep HTML out of Markdown code blocks without changing its text content."""
-    st.markdown("\n".join(line.strip() for line in markup.splitlines()), unsafe_allow_html=True)
+def escape(value: str) -> str:
+    return html.escape(value, quote=True)
 
 
 photo = asset_data_uri(str(ROOT / "assets/profile/peter-atef-hero.jpg"), "image/jpeg")
 resume = asset_data_uri(str(ROOT / PROFILE["resume_path"]), "application/pdf")
-resume_href = resume or html.escape(PROFILE["resume_path"], quote=True)
+resume_href = resume or escape(PROFILE["resume_path"])
 resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume else ""
-contact_href = route_href("/contact")
-weather_href = route_href("/weather_pipeline")
-portrait = (
-    f'<img src="{photo}" alt="Peter Atef" width="400" height="400">'
-    if photo else '<span class="pa-portrait-fallback">PA</span>'
-)
-stack = "".join(f"<span>{html.escape(item)}</span>" for item in SPECIALTIES[:5])
-
-render_html(f'''
-<section class="pa-hero">
-    <div class="pa-hero-copy">
-        <p class="pa-eyebrow"><span></span> PETER ATEF / DATA PORTFOLIO</p>
-        <h1>Junior<br>Data Engineer<span class="pa-heading-dot">.</span></h1>
-        <p class="pa-hero-lead">{html.escape(PROFILE["hero_subtitle"])}</p>
-        <p class="pa-hero-context">{html.escape(PROFILE["hero_subtitle_secondary"])}</p>
-        <div class="pa-hero-actions">
-            <a class="pa-button pa-button-copper pa-hero-primary" href="{weather_href}" target="_self">Explore my work <span aria-hidden="true">↗</span></a>
-            <a class="pa-button pa-button-outline" href="{resume_href}"{resume_attr}>Download resume <span aria-hidden="true">↓</span></a>
-        </div>
-        <div class="pa-hero-stack"><span>CORE STACK</span><div>{stack}</div></div>
-    </div>
-    <aside class="pa-profile-card" aria-label="Peter Atef profile">
-        <div class="pa-portrait">{portrait}<span class="pa-photo-caption">BASED IN {html.escape(PROFILE["location"].upper())}</span></div>
-        <div class="pa-profile-info">
-            <p class="pa-availability"><span></span>Open to opportunities</p>
-            <h2>{html.escape(PROFILE["full_name"])}</h2>
-            <p>{html.escape(PROFILE["title"])}</p>
-            <div class="pa-profile-links">
-                <a href="{html.escape(PROFILE["github_url"], quote=True)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-                <a href="{html.escape(PROFILE["linkedin_url"], quote=True)}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-                <a href="{contact_href}" target="_self">Contact ↗</a>
-            </div>
-        </div>
-    </aside>
-</section>
-<div class="pa-focus"><span class="pa-focus-label">CURRENT FOCUS</span><p>{html.escape(PROFILE["current_focus_status"])}</p></div>
-<section class="pa-section-heading">
-    <div><p class="pa-eyebrow">01 / SELECTED WORK</p><h2>From raw data to useful models.</h2></div>
-    <p>Implementation, decisions, and source code.</p>
-</section>
-''')
-
+portrait = f'<img src="{photo}" alt="Peter Atef" width="72" height="72">' if photo else '<span class="mn-monogram">PA</span>'
 projects = sorted((project for project in PROJECTS if project.get("featured")), key=lambda project: project.get("sort_order", 999))
-for index, project in enumerate(projects, 1):
-    st.markdown(project_card_html(project, index=index), unsafe_allow_html=True)
+project_markup = "".join(project_card_html(project, index=index) for index, project in enumerate(projects, 1))
+stack = "".join(f"<span>{escape(item)}</span>" for item in SPECIALTIES)
 
-specialties = "".join(f"<span>{html.escape(item)}</span>" for item in SPECIALTIES)
-render_html(f'''
-<section class="pa-about">
-    <div><p class="pa-eyebrow">02 / BACKGROUND</p><h2>Quality first.<br> Then the pipeline.</h2></div>
-    <div class="pa-about-copy"><p>{html.escape(PROFILE["bio"])}</p><div class="pa-tags">{specialties}</div></div>
-</section>
-<section class="pa-contact">
-    <div><p class="pa-eyebrow">LET'S TALK</p><h2>Open to Junior Data Engineer opportunities.</h2></div>
-    <a class="pa-button pa-button-ink" href="{contact_href}" target="_self">Get in touch <span aria-hidden="true">↗</span></a>
-</section>
-<footer class="pa-footer"><span>{html.escape(PROFILE["full_name"])} / Data portfolio</span><a href="{html.escape(PROFILE["github_url"], quote=True)}" target="_blank" rel="noopener noreferrer">Built with Python & Streamlit ↗</a></footer>
-''')
+markup = f'''
+<div class="mn-home">
+<aside class="mn-identity">
+    <a class="mn-person" href="./" target="_self">{portrait}<span>DATA ENGINEERING<br>PORTFOLIO / 2026</span></a>
+    <h1>Peter Atef<span>.</span></h1>
+    <p class="mn-role">Junior Data Engineer</p>
+    <p class="mn-statement">Reliable pipelines.<br> Data you can trust.</p>
+    <p class="mn-intro">Python, SQL and a quality-first approach to turning raw records into useful models.</p>
+    <nav class="mn-jumps" aria-label="Home sections">
+        <a href="#selected-work" target="_self"><span>01</span> Selected work</a>
+        <a href="#background" target="_self"><span>02</span> Background</a>
+        <a href="#contact" target="_self"><span>03</span> Get in touch</a>
+    </nav>
+    <a class="mn-resume" href="{resume_href}"{resume_attr}>Download resume <span aria-hidden="true">↗</span></a>
+    <div class="mn-socials"><a href="{escape(PROFILE['github_url'])}" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="{escape(PROFILE['linkedin_url'])}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
+    <p class="mn-location">{escape(PROFILE['location'])} <span>·</span> Open to opportunities</p>
+</aside>
+<main class="mn-content">
+    <section class="mn-opening"><p class="mn-eyebrow">BUILD / VALIDATE / EXPLAIN</p><p>{escape(PROFILE['hero_subtitle'])}</p><p class="mn-opening-secondary">{escape(PROFILE['hero_subtitle_secondary'])}</p></section>
+    <section id="selected-work" class="mn-work"><div class="mn-section-label"><span>01 / SELECTED WORK</span><span>3 PROJECTS</span></div>{project_markup}</section>
+    <section id="background" class="mn-background"><div class="mn-section-label"><span>02 / BACKGROUND</span></div><h2>Quality first.<br>Then the pipeline.</h2><p>{escape(PROFILE['bio'])}</p><div class="mn-stack">{stack}</div><div class="mn-focus"><span>CURRENT FOCUS</span><p>{escape(PROFILE['current_focus_status'])}</p></div></section>
+    <section id="contact" class="mn-contact"><p class="mn-eyebrow">03 / GET IN TOUCH</p><h2>Let's build something<br>that holds up.</h2><p>{escape(PROFILE['availability'])}</p><a class="mn-contact-link" href="./contact" target="_self">Start a conversation <span aria-hidden="true">↗</span></a></section>
+    <footer class="mn-footer"><span>Peter Atef / Data portfolio</span><span>Built with Python & Streamlit</span></footer>
+</main>
+</div>
+'''
+st.markdown("\n".join(line.strip() for line in markup.splitlines()), unsafe_allow_html=True)
