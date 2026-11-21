@@ -33,7 +33,8 @@ def project_card_html(project: dict, *, index: int = 1, compact: bool = False) -
     secondary = ""
     if demo_url != case_url:
         href = route_href(demo_url) if demo_url.startswith("/") else demo_url
-        secondary = f'<a class="pa-text-link" href="{html.escape(href, quote=True)}" target="_self">Dashboard ↗</a>'
+        secondary_label = 'Explore Dashboard (sample)' if slug == 'weather-forecast-data-platform' else 'Dashboard'
+        secondary = f'<a class="pa-text-link" href="{html.escape(href, quote=True)}" target="_self">{secondary_label} ↗</a>'
     repository = project.get("repository_url", "")
     source = (
         f'<a class="pa-text-link" href="{html.escape(repository, quote=True)}" target="_blank" rel="noopener noreferrer">Source code ↗</a>'

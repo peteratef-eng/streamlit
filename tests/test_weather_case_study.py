@@ -38,7 +38,7 @@ class WeatherCaseStudyTest(unittest.TestCase):
         self.assertTrue(scope.layout.xaxis.fixedrange)
 
     def test_evidence_is_local_and_present(self) -> None:
-        for filename in ('dag.png', 'dbt-lineage.png', 'failure-run.png'):
+        for filename in ('dag.png', 'dbt-lineage.png', 'failure-run.png', 'pipeline-flow.gif', 'pipeline-flow-still.png'):
             with self.subTest(filename=filename):
                 self.assertGreater((ROOT / 'assets/projects/weather' / filename).stat().st_size, 0)
 
@@ -48,6 +48,8 @@ class WeatherCaseStudyTest(unittest.TestCase):
         self.assertIn('not independently verified current infrastructure', view)
         self.assertIn('No weather measurements are simulated', view)
         self.assertIn('Next improvements, not completed features', view)
+        self.assertIn('Conceptual animation, not live telemetry', view)
+        self.assertIn('Play conceptual pipeline animation', view)
         self.assertNotIn('requests.get', view)
         self.assertNotIn('read_sql', view)
 

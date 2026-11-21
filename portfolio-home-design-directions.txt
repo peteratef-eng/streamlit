@@ -1,0 +1,93 @@
+# Portfolio design directions
+Checked 21 November 2026. Proposals only, no implementation.
+
+## Recommendation
+
+Choose **2. Project Gallery** if the priority is to make Home and the project cards feel substantially better immediately. It puts the work before long biography text and replaces generic pipeline-diagram cards with deliberate project-specific cover images. Choose **1. Midnight Engineer** for a stronger technical identity, or **3. Editorial Notebook** for a quieter, more personal presentation.
+
+These are adaptations of real sites, not promises to reproduce them pixel for pixel. The references demonstrate layout and hierarchy, not data-engineering credentials. I inspected the live pages and screenshots; no award status is claimed.
+
+## 1. Midnight Engineer
+
+**Reference:** [Brittany Chiang](https://brittanychiang.com/)
+
+Observed: deep navy background, a prominent identity column, restrained section links, experience/project content in the other column, small technology pills and understated card treatment.
+
+**Peter's Home:** a compact portrait and name/Junior Data Engineer identity on the left, with a short statement, resume/contact links and a single featured Weather project visible on the right. The project list is the main content, not an afterthought below a giant introduction. Keep navigation simple; do not add a second competing sidebar.
+
+**Profile card:** compact and integrated into the page, not a large framed headshot. Small portrait, role, location only if confirmed, and direct contact links.
+
+**Project cards:** dark flat panels with a small real preview, title, one engineering problem, one grounded implementation/result line, stack tags and clear Case Study / Dashboard / Code actions. Sample dashboards remain visibly labeled sample.
+
+**Typography/color:** strong sans-serif headings, readable body copy, small monospace section labels. Midnight navy, slate, off-white and a restrained mint accent, or copper if Peter wants continuity with Weather.
+
+**Motion:** short border/background transitions and a small arrow shift on hover. No cursor spotlight, particle field, typewriter or fake operational counters.
+
+**Why it fits:** makes technical substance easy to scan and gives a junior engineer a confident identity without implying seniority.
+
+**Streamlit feasibility:** custom HTML/CSS grid and cards; stack the identity block above projects on mobile. Avoid recreating the source site's exact sticky/spotlight behavior. Main trade-off: denser text, less image-led impact.
+
+## 2. Project Gallery, recommended
+
+**Reference:** [Samuel Kraft](https://samuelkraft.com/)
+**Secondary layout reference:** [SJ](https://www.sj.land/) for modular panels, not its full app-like navigation.
+
+Observed: Samuel's page pairs a short personal introduction with image-led project entries and brief descriptions. SJ uses a strong headline, a sidebar and modular content panels. Neither needs to be copied literally.
+
+**Peter's Home:** a short, bold hero followed immediately by a large featured Weather tile. Beneath it, two balanced tiles for Job Market and E-Commerce. Use generous white space, a consistent cover ratio and fewer badges. A small personal/about area follows the work.
+
+**Profile card:** a horizontal identity strip: portrait, name, role and two useful links. It should not compete with the featured project for attention.
+
+**Project cards:** the top half is a deliberate project-specific visual, not the same architecture map repeated. Weather gets an architecture/detail cover or a clearly marked sample dashboard preview; Job Market gets a real dashboard crop; E-Commerce gets its own analytical cover. Below: title, two-line description, one honest evidence line and explicit actions. Weather remains first and largest.
+
+**Typography/color:** clean sans-serif, larger project titles, compact metadata. White/soft gray surfaces, near-black/navy text, one cobalt accent for actions; project preview colors provide variety. Rounded corners are restrained rather than pill-shaped everywhere.
+
+**Motion:** subtle 2-4 px card lift, a small image scale within a clipped cover and a restrained shadow. One animated Weather preview only if it stays quiet and has a still option. No autoplay carousel.
+
+**Why it fits:** recruiters can understand three different projects at a glance, and the portfolio looks like finished work instead of a stack of generic information cards. It addresses Peter's specific complaint about Home and cards most directly.
+
+**Streamlit feasibility:** CSS grid with a featured tile and two regular tiles, local image assets, HTML card links. A single-column mobile stack preserves order and readable text. No drag-and-drop bento engine or heavy JavaScript. Main trade-off: needs carefully composed project covers, not random screenshots stretched to fill space.
+
+## 3. Editorial Notebook
+
+**Reference:** [Lee Robinson](https://leerob.com/)
+
+Observed: light ground, serif-led typography, a concise biography, list-like notes/blog entries and a prominent personal illustration. This is a content-led page rather than a gallery of heavy cards.
+
+**Peter's Home:** large name and one precise line about the systems he builds, paired with an existing portrait or original technical illustration. Below, an editorial Selected Work list with Weather first, then Job Market and E-Commerce. Finish with short engineering notes or lessons already supported by the case studies, not invented blog posts.
+
+**Profile card:** remove the standalone framed card. Integrate the portrait and role into the hero, with simple underlined contact/resume links.
+
+**Project cards:** turn them into generous horizontal case-study rows, separated by thin rules. Small preview, number, title, short engineering story and links. Weather can have one larger featured row, but the rows share an orderly type hierarchy.
+
+**Typography/color:** a restrained serif for display headings plus a clean sans-serif for controls and project metadata. Warm white, charcoal, subtle gray rules and a small copper accent.
+
+**Motion:** almost none. Link underline and color transitions only. The pipeline animation belongs in its case study, not behind Home text.
+
+**Why it fits:** emphasizes technical reasoning and clear communication. The SMTP failure lesson, idempotent upserts and timezone/completeness decisions give Peter real material for concise engineering stories.
+
+**Streamlit feasibility:** local font assets if licensed, CSS typography, normal HTML rows and existing navigation. Mobile rows stack their preview above text. Main trade-off: intentionally quiet; it will not satisfy someone looking for a dramatic visual showcase as well as option 2.
+
+## Shared rules for any choice
+
+- Keep a clear Junior Data Engineer role and Weather-first project order.
+- Show real project evidence; do not invent impact numbers, live status, employers or user counts.
+- Keep dashboard sample labels and the distinction between implementation and documented deployment.
+- Reduce repeated biography text, technology-chip walls and duplicate navigation.
+- Keep one clear primary action, with separate Case Study, Dashboard and Code links where each destination exists.
+- Use readable 320/390 px layouts, keyboard-visible focus and reduced-motion treatment.
+- Implement as patch 5 only after Peter picks a direction. No Home redesign has been started.
+
+## Source notes
+
+Primary pages inspected and visually checked:
+- https://brittanychiang.com/
+- https://samuelkraft.com/
+- https://leerob.com/
+- https://www.sj.land/
+
+Editorial/community discovery sources, used to find references rather than to certify quality or award status:
+- https://colorlib.com/wp/developer-portfolios/
+- https://github.com/KodYazicam/awesome-developer-portfolios
+
+A gallery entry associated sj.land with a different name; the actual live site identifies itself as SJ. This report uses the site's own identity and does not repeat the gallery's attribution. Reference site content can change; proposals above are our design adaptations, not descriptions of every interaction on the source pages.

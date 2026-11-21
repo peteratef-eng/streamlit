@@ -21,11 +21,11 @@ class PortfolioProjectNavigationTest(unittest.TestCase):
         weather = next(project for project in PROJECTS if project["slug"] == "weather-forecast-data-platform")
         page = SIDEBAR_PROJECTS[0]["pages"][0]
         self.assertEqual(page["path"], weather["case_study_page"])
-        self.assertEqual(page["route"], weather["demo_url"])
+        self.assertEqual(page["route"], weather["case_study_route"])
         self.assertEqual(route_href(page["route"]), "./weather_pipeline")
         self.assertTrue((ROOT / page["path"]).is_file())
         self.assertEqual(weather["demo_label"], "View Case Study")
-        self.assertEqual(weather["case_study_route"], "")
+        self.assertEqual(weather["demo_url"], "/weather_dashboard")
 
     def test_job_market_selection_does_not_depend_on_order(self) -> None:
         for name in ("about", "project_overview"):

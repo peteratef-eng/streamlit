@@ -26,6 +26,7 @@ SIDEBAR_PROJECTS = [
                 "route": "/weather_pipeline",
                 "url_path": "weather_pipeline",
             },
+            {"label": "Sample Dashboard", "path": "views/weather_dashboard.py", "route": "/weather_dashboard", "url_path": "weather_dashboard"},
         ],
     },
     {

@@ -35,7 +35,7 @@ markup(f'''
     <p class="wx-hero-lead">A daily forecast pipeline, built to rerun safely and fail visibly.</p>
     <p class="wx-hero-copy">Open-Meteo forecasts for Cairo and Alexandria, preserved as raw JSON, validated before loading, and modeled into Cairo-local daily marts.</p>
     <div class="pa-tags"><span>Python</span><span>PostgreSQL</span><span>dbt</span><span>Apache Airflow</span><span>Docker Compose</span><span>AWS EC2</span></div>
-    <div class="pa-hero-actions"><a class="pa-button pa-button-copper" href="{REPOSITORY}" target="_blank" rel="noopener noreferrer">Explore source code ↗</a><a class="pa-button pa-button-outline" href="#pipeline">Follow the pipeline ↓</a></div>
+    <div class="pa-hero-actions"><a class="pa-button pa-button-copper" href="{REPOSITORY}" target="_blank" rel="noopener noreferrer">Explore source code ↗</a><a class="pa-button pa-button-outline" href="./weather_dashboard" target="_self">Explore Dashboard (sample) ↗</a><a class="pa-button pa-button-outline" href="#pipeline" target="_self">Follow the pipeline ↓</a></div>
 </section>
 <div class="wx-evidence-note"><strong>Repository case study, not a live monitor.</strong> Code and screenshots are from commit {COMMIT}. AWS deployment and experiment outcomes below are documented in the project README, not independently verified current infrastructure.</div>
 <div class="wx-metrics">
@@ -47,6 +47,13 @@ markup(f'''
 <div id="pipeline"></div>
 ''')
 heading("01 / THE DATA PATH", "One forecast, every layer.", "Airflow orchestrates the workflow. The ingestion script stores the raw response before validation and database writes.")
+# Local static assets only; toggling playback does not contact the source systems.
+play_animation = st.toggle("Play conceptual pipeline animation", value=True, key="weather_pipeline_animation")
+st.image(
+    str(ROOT / "assets/projects/weather" / ("pipeline-flow.gif" if play_animation else "pipeline-flow-still.png")),
+    caption="Conceptual animation, not live telemetry. Arrows show data movement; Airflow orchestrates the tasks inside Docker on the README-documented EC2 host.",
+    use_container_width=True,
+)
 steps = [
     ("01", "Fetch", "Open-Meteo API", "Five hourly variables, 14-day horizon, 30-second request timeout."),
     ("02", "Preserve", "Timestamped raw JSON", "Keep the API response in data/raw before checking units or loading."),

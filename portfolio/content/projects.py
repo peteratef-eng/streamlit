@@ -98,12 +98,12 @@ PROJECTS = [
         "technologies": ["Python", "Airflow", "PostgreSQL", "dbt", "Docker", "AWS"],
         "key_metric": "2 cities | 14-day forecast horizon",
         "cover_image": "",
-        "demo_url": "/weather_pipeline",
+        "demo_url": "/weather_dashboard",
         "demo_label": "View Case Study",
         "repository_url": "https://github.com/peteratef-eng/weather-forecast-data-platform",
         "case_study_page": "views/weather_pipeline.py",
-        "case_study_route": "",
-        "dashboard_page": "",
+        "case_study_route": "/weather_pipeline",
+        "dashboard_page": "views/weather_dashboard.py",
         "sort_order": 0,
         "case_study_sections": {
             "Business problem": (
