@@ -325,3 +325,72 @@ a.pa-text-link { display: inline-flex; align-items: center; min-height: 44px; fo
 .stApp:has(.mn-project-index) [data-testid="stSidebar"] button,
 .stApp:has(.mn-home) [data-testid="stSidebarCollapsedControl"] button,
 .stApp:has(.mn-project-index) [data-testid="stSidebarCollapsedControl"] button { color: #C5D3E6 !important; }
+
+/* Midnight Engineer, sitewide. Semantic tokens also style native controls/charts. */
+:root { color-scheme: dark; }
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"],
+header[data-testid="stHeader"] { background: var(--bg) !important; color: var(--text); }
+[data-testid="stSidebar"] { background: #111C30 !important; border-color: var(--border) !important; }
+[data-testid="stSidebar"] summary { background: #17263D !important; }
+[data-testid="stSidebar"] summary *, [data-testid="stSidebar"] button,
+[data-testid="stSidebarCollapsedControl"] button,
+[data-testid="stExpandSidebarButton"] button { color: #C5D3E6 !important; }
+[data-testid="stSidebar"] a { color: #B6C6DC !important; }
+[data-testid="stSidebar"] .sidebar-project-card { background: #152238 !important; }
+[data-testid="stSidebar"] .sidebar-brand { box-shadow: none; }
+h1, h2, h3 { letter-spacing: -.025em; }
+h1 { font-weight: 720; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent) !important; outline-offset: 3px; }
+/* Retire the light illustration surfaces on earlier portfolio pages. */
+.about-hover-card, .experience-hover-card, .contact-hover-card, .skill-card,
+.pipeline-card, .job-intelligence-hover-card, .data-quality-hover-card,
+.home-about-card, .home-skill-card, .featured-project-card, .pipeline-step-card,
+.project-pipeline-banner, .project-pipeline-stage, .project-warehouse-stage,
+.pipeline-orchestration-band, .pipeline-architecture-card, .data-command-hero,
+.quality-summary-item, .quality-limitation-callout, .project-evidence-compact,
+.pa-contact {
+    background: var(--surface) !important; border-color: var(--border) !important;
+    color: var(--text-2) !important; box-shadow: none !important;
+}
+.about-hover-card:hover, .experience-hover-card:hover, .contact-hover-card:hover,
+.skill-card:hover, .pipeline-card:hover, .job-intelligence-hover-card:hover,
+.data-quality-hover-card:hover, .pipeline-step-card:hover {
+    background: #18283E !important; border-color: #477374 !important;
+    transform: none !important; box-shadow: none !important;
+}
+.project-scale-badge, .project-tech-pill, .pipeline-info-icon,
+.pipeline-orchestration-icon, .pipeline-stage-icon,
+.pipeline-orchestration-status span {
+    background: var(--tag-bg) !important; color: var(--tag-text) !important;
+    border-color: var(--border) !important;
+}
+.pipeline-stage-icon { animation: none !important; }
+.contact-card-action { background: var(--tag-bg) !important; color: var(--tag-text) !important; border-color: var(--border) !important; }
+[data-testid="stMetric"] { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 14px; }
+[data-testid="stMetricValue"], [data-testid="stMetricLabel"] { color: var(--text) !important; }
+[data-testid="stExpander"] details { background: var(--surface); border-color: var(--border); }
+[data-testid="stExpander"] summary { color: var(--text) !important; }
+[data-testid="stAlert"] { border: 1px solid var(--border); border-radius: 7px; }
+[data-testid="stAlert"] p { color: var(--text) !important; }
+[data-testid="stPlotlyChart"] { border-radius: 7px; overflow: hidden; }
+.wx-metrics { border-color: var(--border); }
+.wx-metrics strong, .wx-card h3, .wx-pipeline h3 { color: var(--text); }
+.wx-section-head > .pa-eyebrow, .pa-eyebrow { color: var(--accent) !important; }
+@media (max-width: 600px) {
+    .block-container { padding-left: 1rem !important; padding-right: 1rem !important; }
+    h1 { overflow-wrap: anywhere; }
+    .contact-hover-card { overflow-wrap: anywhere; }
+    [data-testid="stMetricValue"] { font-size: 1.65rem; }
+}
+[data-testid="stMarkdownContainer"] a:not(.pa-button):not(.contact-card-action) { color: var(--accent) !important; text-decoration: none; }
+[data-testid="stMarkdownContainer"] a:hover { text-decoration: underline; }
+[data-baseweb="tag"] { background: var(--tag-bg) !important; color: var(--tag-text) !important; }
+[data-baseweb="tag"] span, [data-baseweb="tag"] svg { color: var(--tag-text) !important; fill: currentColor; }
+[data-testid="stAlertContainer"] { background: #293A40 !important; }
+[data-testid="stMultiSelect"] [data-tag] { background: var(--tag-bg) !important; color: var(--tag-text) !important; }
+[data-testid="stMultiSelect"] [data-tag] span,
+[data-testid="stMultiSelect"] [data-tag] button { color: var(--tag-text) !important; }
+/* Filled mint actions need dark text, not the light link foreground. */
+.wx-hero a.pa-button:not(.pa-button-secondary),
+a.pa-button:not(.pa-button-secondary):not(.pa-project-actions .pa-button) { color: #0F172A !important; }

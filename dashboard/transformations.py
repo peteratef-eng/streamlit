@@ -49,6 +49,7 @@ def top_counts(df: pd.DataFrame, column: str, limit: int = 15) -> pd.DataFrame:
         return pd.DataFrame(columns=[column, "postings"])
     return (
         df[column]
+        .astype("object")
         .fillna("Unknown")
         .value_counts()
         .head(limit)

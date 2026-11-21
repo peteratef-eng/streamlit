@@ -21,7 +21,6 @@ def inject_global_styles(theme: dict[str, str]) -> None:
     st.markdown(_build_global_styles(tuple(sorted(theme.items()))), unsafe_allow_html=True)
 
 
-@st.cache_resource(show_spinner=False)
 def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
     theme = dict(theme_items)
     css = (
@@ -54,20 +53,20 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             --hover: {theme["hover"]};
             --disabled: {theme["disabled"]};
             --color-navy: #0f172a;
-            --color-blue: #b45309;
-            --color-blue-dark: #92400e;
-            --color-cyan: #1e3a5f;
+            --color-blue: #78E1CD;
+            --color-blue-dark: #A2F0DF;
+            --color-cyan: #82B5F5;
             --color-green: #10b981;
-            --color-background: #f6f8fc;
-            --color-surface: #ffffff;
-            --color-text-muted: #52637a;
-            --color-border: #d8e2ef;
+            --color-background: #0F172A;
+            --color-surface: #142036;
+            --color-text-muted: #93A8C4;
+            --color-border: #2B405B;
             --color-border-blue: rgba(180, 83, 9, 0.24);
             --font: "Source Sans Pro", "Source Sans 3", "Source Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --data-navy: #0F172A;
-            --data-blue: #B45309;
-            --data-blue-dark: #92400E;
-            --data-cyan: #1E3A5F;
+            --data-navy: #E2E8F0;
+            --data-blue: #78E1CD;
+            --data-blue-dark: #A2F0DF;
+            --data-cyan: #82B5F5;
             --data-cyan-soft: rgba(30, 58, 95, 0.12);
             --data-indigo: #4F46E5;
             --data-green: #10B981;
@@ -75,13 +74,13 @@ def _build_global_styles(theme_items: tuple[tuple[str, str], ...]) -> str:
             --data-amber: #F59E0B;
             --data-amber-soft: rgba(245, 158, 11, 0.10);
             --data-red: #B91C1C;
-            --data-surface: #FFFFFF;
-            --data-background: #F8FAFC;
-            --data-background-blue: #EFF6FF;
-            --data-border: #CBD5E1;
+            --data-surface: #142036;
+            --data-background: #0F172A;
+            --data-background-blue: #18283E;
+            --data-border: #2B405B;
             --data-border-soft: rgba(148, 163, 184, 0.28);
-            --data-text: #0F172A;
-            --data-text-secondary: #64748B;
+            --data-text: #E2E8F0;
+            --data-text-secondary: #93A8C4;
         }}
 
         html, body, .stApp {{

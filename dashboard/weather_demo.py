@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from dashboard.weather_case_study import chart_style
 
 SAMPLE_NOTICE = "Sample data for demonstration. Live pipeline output is not published."
-CITY_COLORS = {"Cairo": "#B45309", "Alexandria": "#1E3A5F"}
+CITY_COLORS = {"Cairo": "#78E1CD", "Alexandria": "#82B5F5"}
 
 
 def sample_daily_mart() -> pd.DataFrame:
@@ -52,7 +52,7 @@ def temperature_chart(data: pd.DataFrame) -> go.Figure:
         if subset.empty:
             continue
         figure.add_trace(go.Scatter(x=subset['day'], y=subset['min_temp'], mode='lines', line={'width':0}, legendgroup=city, showlegend=False, hoverinfo='skip'))
-        figure.add_trace(go.Scatter(x=subset['day'], y=subset['max_temp'], mode='lines', line={'width':0}, fill='tonexty', fillcolor='rgba(180,83,9,0.10)' if city=='Cairo' else 'rgba(30,58,95,0.10)', legendgroup=city, showlegend=False, hoverinfo='skip'))
+        figure.add_trace(go.Scatter(x=subset['day'], y=subset['max_temp'], mode='lines', line={'width':0}, fill='tonexty', fillcolor='rgba(120,225,205,0.10)' if city=='Cairo' else 'rgba(130,181,245,0.10)', legendgroup=city, showlegend=False, hoverinfo='skip'))
         figure.add_trace(go.Scatter(x=subset['day'], y=subset['avg_temp'], mode='lines+markers', name=city, line={'color':color,'width':3}, marker={'size':5}, legendgroup=city, customdata=subset[['min_temp','max_temp','hours_count']].values, hovertemplate=city+' · %{x}<br>Avg %{y:.1f} °C<br>Min %{customdata[0]:.1f} / max %{customdata[1]:.1f} °C<br>Coverage %{customdata[2]} hours<extra>Sample</extra>'))
     chart_style(figure, height=340)
     figure.update_layout(showlegend=True, legend={'orientation':'h','y':1.16,'x':0}, hovermode='x unified')

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 def apply_chart_theme(fig, theme: dict[str, str]):
     fig.update_layout(
-        template="plotly_white",
+        template="plotly_dark" if theme["mode"] == "dark" else "plotly_white",
         paper_bgcolor=theme["chart_bg"],
         plot_bgcolor=theme["chart_bg"],
         font=dict(family="Inter, Segoe UI, Arial", size=13, color=theme["secondary_text"]),

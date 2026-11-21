@@ -12,9 +12,9 @@ gatherUsageStats = false
 toolbarMode = "viewer"
 
 [theme]
-base = "light"
-primaryColor = "#2563eb"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f8fafc"
-textColor = "#0f172a"
+base = "dark"
+primaryColor = "#78E1CD"
+backgroundColor = "#0F172A"
+secondaryBackgroundColor = "#142036"
+textColor = "#E2E8F0"
 font = "sans serif"
