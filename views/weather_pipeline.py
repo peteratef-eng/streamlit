@@ -49,11 +49,12 @@ markup(f'''
 heading("01 / THE DATA PATH", "One forecast, every layer.", "Airflow orchestrates the workflow. The ingestion script stores the raw response before validation and database writes.")
 # Local static assets only; toggling playback does not contact the source systems.
 play_animation = st.toggle("Play conceptual pipeline animation", value=True, key="weather_pipeline_animation")
-st.image(
-    str(ROOT / "assets/projects/weather" / ("pipeline-flow.gif" if play_animation else "pipeline-flow-still.png")),
-    caption="Conceptual animation, not live telemetry. Arrows show data movement; Airflow orchestrates the tasks inside Docker on the README-documented EC2 host.",
-    use_container_width=True,
-)
+with st.container(key="weather_pipeline_figure"):
+    st.image(
+        str(ROOT / "assets/projects/weather" / ("pipeline-flow.gif" if play_animation else "pipeline-flow-still.png")),
+        caption="Conceptual animation, not live telemetry. Arrows show data movement; Airflow orchestrates the tasks inside Docker on the README-documented EC2 host.",
+        use_container_width=True,
+    )
 steps = [
     ("01", "Fetch", "Open-Meteo API", "Five hourly variables, 14-day horizon, 30-second request timeout."),
     ("02", "Preserve", "Timestamped raw JSON", "Keep the API response in data/raw before checking units or loading."),

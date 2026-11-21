@@ -406,3 +406,15 @@ a.pa-button-copper:hover { background: #A2F0DF !important; color: #0F172A !impor
 .wx-pipeline p { font-size: 14px !important; color: #B2C2D8 !important; }
 [data-testid="stSidebarCollapseButton"] button,
 [data-testid="stSidebarCollapseButton"] button * { color: #C5D3E6 !important; }
+
+
+/* Keep the conceptual animation compact without shrinking its caption text. */
+.st-key-weather_pipeline_figure {
+    width: 65% !important;
+    max-width: 760px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+@media (max-width: 767px) {
+    .st-key-weather_pipeline_figure { width: 100% !important; }
+}
