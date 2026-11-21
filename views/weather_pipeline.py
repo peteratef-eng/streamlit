@@ -33,7 +33,7 @@ markup(f'''
     <p class="pa-eyebrow">FEATURED CASE STUDY / DATA ENGINEERING</p>
     <h1>Weather Forecast<br>Data Platform<span>.</span></h1>
     <p class="wx-hero-lead">A daily forecast pipeline, built to rerun safely and fail visibly.</p>
-    <p class="wx-hero-copy">Open-Meteo forecasts for Cairo and Alexandria, preserved as raw JSON, validated before loading, and modeled into Cairo-local daily marts.</p>
+    <p class="wx-hero-copy">Open-Meteo API → Python ELT → PostgreSQL. Python preserves raw JSON, validates units and upserts hourly rows for Cairo and Alexandria. dbt builds Cairo-local daily marts in PostgreSQL; Airflow orchestrates the full workflow.</p>
     <div class="pa-tags"><span>Python</span><span>PostgreSQL</span><span>dbt</span><span>Apache Airflow</span><span>Docker Compose</span><span>AWS EC2</span></div>
     <div class="pa-hero-actions"><a class="pa-button pa-button-copper" href="{REPOSITORY}" target="_blank" rel="noopener noreferrer">Explore source code ↗</a><a class="pa-button pa-button-outline" href="./weather_dashboard" target="_self">Explore Dashboard (sample) ↗</a><a class="pa-button pa-button-outline" href="#pipeline" target="_self">Follow the pipeline ↓</a></div>
 </section>
@@ -46,21 +46,21 @@ markup(f'''
 </div>
 <div id="pipeline"></div>
 ''')
-heading("01 / THE DATA PATH", "One forecast, every layer.", "Airflow orchestrates the workflow. The ingestion script stores the raw response before validation and database writes.")
+heading("01 / THE DATA PATH", "One forecast, every layer.", "Data path: Open-Meteo API → Python ELT → PostgreSQL. Airflow orchestrates Python ingestion, dbt models and tests; it is not a data-storage step.")
 # Local static assets only; toggling playback does not contact the source systems.
 play_animation = st.toggle("Play conceptual pipeline animation", value=True, key="weather_pipeline_animation")
 with st.container(key="weather_pipeline_figure"):
     st.image(
         str(ROOT / "assets/projects/weather" / ("pipeline-flow.gif" if play_animation else "pipeline-flow-still.png")),
-        caption="Conceptual animation, not live telemetry. Arrows show data movement; Airflow orchestrates the tasks inside Docker on the README-documented EC2 host.",
+        caption="Conceptual animation, not live telemetry. Solid arrows show Open-Meteo API → Python ELT → PostgreSQL. Airflow orchestrates Python ingestion, dbt run and dbt test. dbt builds models in PostgreSQL, not a separate data store. AWS hosting is README-documented.",
         use_container_width=True,
     )
 steps = [
-    ("01", "Fetch", "Open-Meteo API", "Five hourly variables, 14-day horizon, 30-second request timeout."),
-    ("02", "Preserve", "Timestamped raw JSON", "Keep the API response in data/raw before checking units or loading."),
-    ("03", "Validate", "Units before writes", "Temperature, precipitation, humidity, wind and cloud-cover units must match."),
-    ("04", "Load", "PostgreSQL upsert", "ON CONFLICT (city, time) DO UPDATE refreshes revised forecast values."),
-    ("05", "Model", "dbt staging → daily mart", "Keep UTC traceability; group metrics by Africa/Cairo calendar day."),
+    ("01", "Extract", "Python ELT ← Open-Meteo", "src/main.py requests five hourly variables with a 14-day horizon and a 30-second timeout."),
+    ("02", "Preserve", "Python → raw JSON", "Python keeps the API response in data/raw before checking units or loading."),
+    ("03", "Validate", "Python unit checks", "Temperature, precipitation, humidity, wind and cloud-cover units must match before loading."),
+    ("04", "Load", "Python → PostgreSQL", "Python upserts city-hour records. ON CONFLICT (city, time) DO UPDATE refreshes revised forecast values."),
+    ("05", "Transform", "dbt inside PostgreSQL", "After the load, dbt builds staging and daily marts in PostgreSQL, preserving UTC traceability and Cairo-local days."),
     ("06", "Test", "Schema + grain checks", "Not-null tests and a singular city/day uniqueness test."),
 ]
 markup('<div class="wx-pipeline">' + ''.join(f'<article><span class="wx-step-number">{number} / {label}</span><h3>{title}</h3><p>{detail}</p></article>' for number, label, title, detail in steps) + '</div>')

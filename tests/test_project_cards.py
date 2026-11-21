@@ -13,7 +13,18 @@ class ProjectCardTest(unittest.TestCase):
         self.assertIn('href="./weather_pipeline"', markup)
         self.assertIn("View case study", markup)
         self.assertNotIn("Live Demo", markup)
-        self.assertIn("Airflow: ingest", markup)
+        self.assertIn('class="wxa-orchestrator"', markup)
+        self.assertIn("Apache Airflow", markup)
+        self.assertIn("Workflow orchestration", markup)
+        flow = markup[markup.index('class="wxa-data-path"'):]
+        stages = [flow.index(label) for label in ("Open-Meteo API", "Python ELT", "PostgreSQL")]
+        self.assertEqual(stages, sorted(stages))
+        for tool in ("Python ELT", "PostgreSQL", "dbt", "Apache Airflow", "Docker Compose", "AWS EC2"):
+            self.assertIn(tool, markup)
+        self.assertIn("README-documented deployment", markup)
+        self.assertIn("not independently verified", markup)
+        self.assertIn("not live telemetry", markup)
+        self.assertLess(markup.index('class="wxa-orchestrator"'), markup.index('class="wxa-data-path"'))
         self.assertIn(weather["repository_url"], markup)
 
     def test_job_market_map_does_not_imply_dbt_dashboard_feed(self) -> None:

@@ -464,6 +464,15 @@ The portfolio uses anonymous Google Analytics 4 usage analytics to understand pa
 * `views/`: portfolio pages and project views, including the Weather pipeline case study.
 * `views/market_dashboard.py`: interactive dashboard with KPI cards, filters, Plotly charts, and plain-English chart explanations.
 
+### Weather project data path
+
+`Open-Meteo API -> Python ELT (src/main.py) -> PostgreSQL`
+
+Python fetches the forecasts, preserves timestamped raw JSON in `data/raw`, validates units, and upserts hourly city records. After loading, dbt builds staging and Cairo-local daily marts **in PostgreSQL**, then tests them. Airflow orchestrates the complete workflow: Python ingestion -> dbt run -> dbt test. Airflow is not a data store, and dbt is not a separate database.
+
+The project-card map is a simplified data path. The case-study animation is conceptual, not live telemetry. AWS deployment is README-documented project evidence, not independently verified current infrastructure; the portfolio's sample Weather dashboard is separate and uses fixed synthetic values.
+
+
 Dashboard features include:
 
 * Total postings, companies, countries, skills, average salary, median salary, remote share, and salary coverage.

@@ -85,10 +85,10 @@ PROJECTS = [
         "title": "Weather Forecast Data Platform",
         "short_description": (
             "Daily ELT pipeline for Egyptian cities using the Open-Meteo API, "
-            "PostgreSQL upserts, dbt models, Docker, and Apache Airflow."
+            "Python ELT, PostgreSQL upserts, dbt models, and Airflow orchestration."
         ),
         "full_description": (
-            "Fetches hourly weather forecasts, saves raw JSON, validates units, "
+            "Python ELT fetches hourly weather forecasts, saves raw JSON, validates units, "
             "upserts city-hour records, and builds Cairo-local daily marts."
         ),
         "category": "Data Engineering",
@@ -111,8 +111,9 @@ PROJECTS = [
                 "visible failures, and consistent timestamps."
             ),
             "Project summary": (
-                "Open-Meteo API -> raw JSON -> validated PostgreSQL upserts -> "
-                "dbt staging and daily marts, orchestrated with Airflow."
+                "Open-Meteo API -> Python ELT -> PostgreSQL. Python preserves raw JSON, "
+                "validates units and upserts hourly rows. dbt builds staging and daily marts "
+                "in PostgreSQL. Airflow orchestrates Python ingestion, dbt run and dbt test."
             ),
         },
     },

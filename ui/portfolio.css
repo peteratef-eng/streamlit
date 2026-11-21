@@ -454,3 +454,84 @@ button[kind="primaryFormSubmit"]:focus-visible,
 button[kind="primaryFormSubmit"]:active { background: #A2F0DF !important; border-color: #A2F0DF !important; }
 a.portfolio-button, a.portfolio-button:hover,
 a.portfolio-button:focus-visible { text-decoration: none !important; }
+
+
+/* Featured Weather architecture: tools, data path and control plane stay distinct. */
+.pa-project-weather, .pa-project-weather.pa-project-compact {
+    grid-column: 1 / -1; display: flex; flex-direction: column; gap: 22px;
+    padding: 22px; container-type: inline-size; container-name: weather-card;
+    border-color: #3D626C; background: #121F33;
+}
+.wxa { width: 100%; background: #0E192B; border: 1px solid #30475E; border-radius: 10px; padding: 20px; }
+.wxa-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 20px; color: #9EB6D0; font: 9px/1.6 monospace; letter-spacing: .1em; }
+.wxa-heading > span:last-child { color: #78E1CD; }
+.wxa-icon { width: 30px; height: 30px; flex: 0 0 30px; color: #8DAFCB; }
+.wxa-icon-python { color: #F2D284; }
+.wxa-icon-postgres { color: #8AB7E5; }
+.wxa-icon-airflow { color: #78E1CD; }
+.wxa-icon-dbt { color: #FFB7A3; }
+.wxa-icon-docker { color: #82C5EB; }
+.wxa-icon-aws { color: #F2C17C; }
+.wxa-orchestrator { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border: 1px solid #3F776F; border-left: 3px solid #78E1CD; border-radius: 6px; padding: 14px 16px; background: #17313B; }
+.wxa-tool { display: flex; align-items: center; gap: 12px; }
+.wxa-tool strong { color: #E2F8F3; font-size: 14px; display: block; font-weight: 650; }
+.wxa-tool span { display: block; color: #A9C9CD; font-size: 11px; margin-top: 3px; }
+.wxa-tasks { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: #CBE2E5; font: 10px/1.6 monospace; }
+.wxa-tasks > span { border: 1px solid #385C65; border-radius: 4px; padding: 4px 6px; background: #142B36; }
+.wxa-tasks b { color: #78E1CD; font-weight: 400; }
+.wxa-control { height: 38px; display: flex; align-items: center; justify-content: center; color: #A2C5CA; font: 10px/1.5 monospace; }
+.wxa-control span { background: #0E192B; padding: 3px 10px; border-left: 1px dashed #619F9A; border-right: 1px dashed #619F9A; }
+.wxa-data-path { display: grid; grid-template-columns: minmax(0,.9fr) 22px minmax(0,1fr) 22px minmax(0,1.15fr); align-items: stretch; gap: 8px; }
+.wxa-node { display: flex; align-items: flex-start; gap: 12px; min-width: 0; background: #16263B; border: 1px solid #354D68; border-radius: 7px; padding: 16px 12px; }
+.wxa-node > div { min-width: 0; flex: 1; }
+.wxa-node .wxa-icon { width: 24px; height: 24px; flex-basis: 24px; margin-top: 18px; }
+.wxa-node small { display: block; color: #9AB4CE; font: 8px/1.5 monospace; letter-spacing: .05em; margin-bottom: 7px; }
+.wxa-node strong { color: #E2EAF6; font-size: 13px; line-height: 1.5; display: block; }
+.wxa-node div > span { color: #B5C7DC; font-size: 11px; line-height: 1.7; display: block; margin-top: 6px; }
+.wxa-source { background: #111E30; border-style: dashed; }
+.wxa-python { border-top: 2px solid #F2D284; }
+.wxa-database { border-top: 2px solid #8AB7E5; }
+.wxa-arrow { align-self: center; text-align: center; color: #78E1CD; font-size: 22px; line-height: 1; }
+.wxa-dbt { display: flex; align-items: center; gap: 7px; border-top: 1px solid #42526A; padding-top: 9px; margin-top: 9px; }
+.wxa-dbt .wxa-icon { width: 16px; height: 16px; flex-basis: 16px; margin: 0; }
+.wxa-dbt > span { color: #C6D4E4 !important; font-size: 10px !important; line-height: 1.6 !important; margin: 0 !important; }
+.wxa-dbt b { color: #FFB7A3; font-size: 12px; }
+.wxa-runtime { display: flex; flex-wrap: wrap; gap: 14px 26px; padding-top: 16px; margin-top: 17px; border-top: 1px solid #2D4057; }
+.wxa-runtime > div { display: flex; align-items: center; gap: 9px; }
+.wxa-runtime .wxa-icon { width: 24px; height: 24px; flex-basis: 24px; }
+.wxa-runtime strong { display: block; color: #D0DDED; font-size: 11px; line-height: 1.6; }
+.wxa-runtime small { display: block; color: #A0B6CE; font-size: 10px; line-height: 1.7; }
+.wxa-note { color: #A2B6CE !important; font-size: 10px !important; line-height: 1.7 !important; margin: 14px 0 0 !important; }
+@container weather-card (max-width: 520px) {
+    .wxa { padding: 16px; }
+    .wxa-data-path { grid-template-columns: 1fr; gap: 6px; }
+    .wxa-arrow { transform: rotate(90deg); padding: 2px 0; font-size: 20px; }
+    .wxa-node { align-items: flex-start; padding: 13px 15px; gap: 14px; }
+    .wxa-node .wxa-icon { width: 30px; height: 30px; flex-basis: 30px; margin-top: 10px; }
+    .wxa-node strong { font-size: 14px; }
+    .wxa-node small { font-size: 9px; margin-bottom: 3px; }
+    .wxa-node div > span { font-size: 12px; margin-top: 3px; }
+    .wxa-dbt { padding-top: 7px; margin-top: 7px; }
+    .wxa-dbt .wxa-icon { width: 17px; height: 17px; flex-basis: 17px; margin: 0; }
+    .wxa-dbt > span { font-size: 11px !important; }
+    .wxa-orchestrator { padding: 12px; gap: 12px; }
+    .wxa-tasks { font-size: 9px; gap: 4px; }
+    .wxa-tasks > span { padding: 4px; }
+    .wxa-control { height: 35px; font-size: 9px; }
+}
+@media (max-width: 600px) {
+    .pa-project-weather, .pa-project-weather.pa-project-compact { padding: 14px; }
+    .wxa-heading { font-size: 8px; letter-spacing: .04em; margin-bottom: 13px; }
+    .wxa-heading > span:last-child { display: none; }
+}
+
+@container weather-card (min-width: 521px) {
+    .wxa-node { flex-direction: column; gap: 8px; }
+    .wxa-node .wxa-icon { margin: 0; }
+    .wxa-node > div { width: 100%; }
+}
+
+.pa-project-weather .wxa-intro .pa-project-title { font-size: 30px !important; margin-top: 8px !important; }
+.pa-project-weather .wxa-intro .pa-project-description { max-width: 760px; margin-bottom: 0 !important; }
+.pa-project-weather .wxa-details .pa-project-metric { margin-top: 0 !important; }
+@media (max-width: 600px) { .pa-project-weather .wxa-intro .pa-project-title { font-size: 25px !important; } }

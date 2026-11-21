@@ -50,6 +50,9 @@ class WeatherCaseStudyTest(unittest.TestCase):
         self.assertIn('Next improvements, not completed features', view)
         self.assertIn('Conceptual animation, not live telemetry', view)
         self.assertIn('Play conceptual pipeline animation', view)
+        self.assertIn('Open-Meteo API → Python ELT → PostgreSQL', view)
+        self.assertIn('dbt builds models in PostgreSQL, not a separate data store', view)
+        self.assertIn('Airflow orchestrates Python ingestion, dbt run and dbt test', view)
         self.assertNotIn('requests.get', view)
         self.assertNotIn('read_sql', view)
 
