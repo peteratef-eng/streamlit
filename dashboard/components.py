@@ -121,7 +121,7 @@ def footer() -> None:
         links.append(f'<a href="{html.escape(PROFILE["github_url"])}" rel="noreferrer">GitHub</a>')
     links_markup = " | ".join(links)
     st.markdown(
-        f'<div class="footer">Peter &mdash; Junior Data Engineer<br>{html.escape(PROFILE["availability"])}<br>{links_markup}</div>',
+        f'<div class="footer">Peter &mdash; Data Engineer<br>{html.escape(PROFILE["availability"])}<br>{links_markup}</div>',
         unsafe_allow_html=True,
     )
 

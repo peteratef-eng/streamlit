@@ -4,10 +4,10 @@ from __future__ import annotations
 PROFILE = {
     "name": "Peter",
     "full_name": "Peter Atef",
-    "title": "Junior Data Engineer",
+    "title": "Data Engineer",
     "headline": "Building reliable data pipelines and turning raw data into analytics-ready models.",
     "summary": (
-        "Junior Data Engineer focused on Python, SQL, PostgreSQL, Pandas, dbt, ETL pipelines, "
+        "Data Engineer focused on Python, SQL, PostgreSQL, Pandas, dbt, ETL pipelines, "
         "data modeling, and data validation. I bring hands-on experience with data workflows, "
         "quality assurance, API integrations, automation, and structured data preparation."
     ),
@@ -25,12 +25,12 @@ PROFILE = {
     "current_focus_status": "Weather pipeline implemented | Next: Air Quality integration",
     "location": "Egypt",
     "email": "petterattef763@gmail.com",
-    "gmail_compose_url": "https://mail.google.com/mail/?view=cm&fs=1&to=petterattef763@gmail.com&su=Junior%20Data%20Engineer%20Opportunity",
-    "mailto_url": "mailto:petterattef763@gmail.com?subject=Junior%20Data%20Engineer%20Opportunity",
+    "gmail_compose_url": "https://mail.google.com/mail/?view=cm&fs=1&to=petterattef763@gmail.com&su=Data%20Engineer%20Opportunity",
+    "mailto_url": "mailto:petterattef763@gmail.com?subject=Data%20Engineer%20Opportunity",
     "linkedin_url": "https://www.linkedin.com/in/peter-atef-eng/",
     "github_url": "https://github.com/peteratef-eng",
     "resume_path": "assets/resume/Peter Resume 2026.pdf",
-    "availability": "Open to Junior Data Engineer opportunities.",
+    "availability": "Open to Data Engineer opportunities.",
 }
 
 

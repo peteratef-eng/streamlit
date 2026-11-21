@@ -17,7 +17,7 @@ def resume_data_uri(path_value: str) -> str:
     return f"data:application/pdf;base64,{encoded}"
 
 st.title("Let's Build Something Reliable")
-st.markdown("I'm open to Junior Data Engineer opportunities where I can build dependable pipelines, improve data quality, and make analytics easier for teams.")
+st.markdown("I'm open to Data Engineer opportunities where I can build dependable pipelines, improve data quality, and make analytics easier for teams.")
 
 badge_cols = st.columns([0.28, 0.22, 0.5])
 with badge_cols[0]:

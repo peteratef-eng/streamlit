@@ -38,7 +38,7 @@ markup = f'''
 <aside class="mn-identity">
     <a class="mn-person" href="./" target="_self">{portrait}<span>DATA ENGINEERING<br>PORTFOLIO / 2026</span></a>
     <h1>Peter Atef<span>.</span></h1>
-    <p class="mn-role">Junior Data Engineer</p>
+    <p class="mn-role">Data Engineer</p>
     <p class="mn-statement">Reliable pipelines.<br> Data you can trust.</p>
     <p class="mn-intro">Python, SQL and a quality-first approach to turning raw records into useful models.</p>
     <nav class="mn-jumps" aria-label="Home sections">

@@ -7,7 +7,7 @@ EXPERIENCE = [
         "location": "Remote",
         "role": "Data Integration Engineer",
         "start_date": "January 2026",
-        "end_date": "April 2026",
+        "end_date": "May 2026",
         "summary": "",
         "responsibilities": [
             "Designed and implemented API integrations for internal systems and external platforms.",

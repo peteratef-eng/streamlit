@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 class MidnightHomeTest(unittest.TestCase):
     def test_home_has_readable_sections_and_personal_identity(self):
         source=(ROOT/'views/home.py').read_text()
-        for text in ('mn-identity','Junior Data Engineer','selected-work','background','contact','Download resume','PROFILE[\'bio\']'):
+        for text in ('mn-identity','Data Engineer','selected-work','background','contact','Download resume','PROFILE[\'bio\']'):
             with self.subTest(text=text): self.assertIn(text,source)
         self.assertNotIn('st.columns',source)
         self.assertNotIn('st.components',source)

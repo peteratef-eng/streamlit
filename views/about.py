@@ -17,7 +17,7 @@ with cols[0]:
 with cols[1]:
     section_card(
         "Current Focus",
-        "I am targeting Junior Data Engineer opportunities where I can build dependable pipelines, improve data quality, and create models that make analysis easier for teams.",
+        "I am targeting Data Engineer opportunities where I can build dependable pipelines, improve data quality, and create models that make analysis easier for teams.",
         class_name="about-hover-card",
     )
 
