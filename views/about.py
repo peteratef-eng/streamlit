@@ -9,7 +9,7 @@ from ui.components import section_card
 
 st.title("About Me")
 metadata = load_dashboard_metadata()
-project = PROJECTS[0]
+project = next(item for item in PROJECTS if item["slug"] == "job-market-intelligence")
 
 cols = st.columns(2)
 with cols[0]:

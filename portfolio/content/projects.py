@@ -80,4 +80,40 @@ PROJECTS = [
             "Limitations": "Customer-level totals exclude ~25% of transactions with no linked CustomerID; only aggregated result tables are shipped with the dashboard, not the raw 44MB source file.",
         },
     },
+    {
+        "slug": "weather-forecast-data-platform",
+        "title": "Weather Forecast Data Platform",
+        "short_description": (
+            "Daily ELT pipeline for Egyptian cities using the Open-Meteo API, "
+            "PostgreSQL upserts, dbt models, Docker, and Apache Airflow."
+        ),
+        "full_description": (
+            "Fetches hourly weather forecasts, saves raw JSON, validates units, "
+            "upserts city-hour records, and builds Cairo-local daily marts."
+        ),
+        "category": "Data Engineering",
+        "year": "2026",
+        "status": "Implemented",
+        "featured": True,
+        "technologies": ["Python", "Airflow", "PostgreSQL", "dbt", "Docker", "AWS"],
+        "key_metric": "2 cities | 14-day forecast horizon",
+        "cover_image": "",
+        "demo_url": "/weather_pipeline",
+        "demo_label": "View Case Study",
+        "repository_url": "https://github.com/peteratef-eng/weather-forecast-data-platform",
+        "case_study_page": "views/weather_pipeline.py",
+        "case_study_route": "",
+        "dashboard_page": "",
+        "sort_order": 0,
+        "case_study_sections": {
+            "Business problem": (
+                "Weather forecasts change daily. Scheduled ingestion needs safe reruns, "
+                "visible failures, and consistent timestamps."
+            ),
+            "Project summary": (
+                "Open-Meteo API -> raw JSON -> validated PostgreSQL upserts -> "
+                "dbt staging and daily marts, orchestrated with Airflow."
+            ),
+        },
+    },
 ]

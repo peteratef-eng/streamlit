@@ -1,0 +1,426 @@
+diff --git a/README.md b/README.md
+index cb5103c..c887828 100644
+--- a/README.md
++++ b/README.md
+@@ -448,20 +448,21 @@ Future improvements include:
+ 
+ ## Live Demo
+ 
+-Hosted dashboard URL: `https://REPLACE_WITH_YOUR_FLY_APP_URL.fly.dev`
++Hosted dashboard URL: `https://app-6py432aqcozmvm4vm477rp.streamlit.app/`
+ 
+-The app is prepared for Fly.io deployment, but no paid resources or real deployment have been created from this repository.
++The portfolio is hosted on Streamlit Community Cloud. The optional Fly.io configuration below is a deployment template, not the live hosting setup.
+ 
+ ---
+ 
+ ## Streamlit Dashboard
+ 
+-This repository now includes a recruiter-friendly Streamlit application with two sections:
++This repository now includes a recruiter-friendly Streamlit application with portfolio pages and project case studies:
+ 
+ The portfolio uses anonymous Google Analytics 4 usage analytics to understand page visits and safe aggregate interactions. It does not send filter selections, search values, salary selections, company selections, email addresses, or form content.
+ 
+-* `app.py`: project overview, business problem, pipeline explanation, source tables, model layers, quality checks, limitations, and developer positioning.
+-* `pages/1_Interactive_Job_Market_Dashboard.py`: interactive dashboard with KPI cards, filters, Plotly charts, and plain-English chart explanations.
++* `app.py`: app entry point, shared layout, analytics, and navigation.
++* `views/`: portfolio pages and project views, including the Weather pipeline case study.
++* `views/market_dashboard.py`: interactive dashboard with KPI cards, filters, Plotly charts, and plain-English chart explanations.
+ 
+ Dashboard features include:
+ 
+@@ -557,8 +558,16 @@ http://localhost:8501
+ 
+ ```text
+ app.py
+-pages/
+-  1_Interactive_Job_Market_Dashboard.py
++views/
++  home.py
++  weather_pipeline.py
++  project_overview.py
++  market_dashboard.py
++  data_pipeline.py
++ui/
++  navigation.py
++portfolio/content/
++  projects.py
+ dashboard/
+   data_loader.py
+   transformations.py
+diff --git a/portfolio/content/profile.py b/portfolio/content/profile.py
+index 43264b5..b6d6704 100644
+--- a/portfolio/content/profile.py
++++ b/portfolio/content/profile.py
+@@ -22,7 +22,7 @@ PROFILE = {
+         "Background in large-scale invoice & logistics data — now building pipelines with Python, "
+         "SQL, PostgreSQL, and dbt."
+     ),
+-    "current_focus_status": "Currently building: Weather & Air Quality pipeline with Airflow",
++    "current_focus_status": "Weather pipeline implemented | Next: Air Quality integration",
+     "location": "Egypt",
+     "email": "petterattef763@gmail.com",
+     "gmail_compose_url": "https://mail.google.com/mail/?view=cm&fs=1&to=petterattef763@gmail.com&su=Junior%20Data%20Engineer%20Opportunity",
+diff --git a/portfolio/content/projects.py b/portfolio/content/projects.py
+index b182232..94cfb74 100644
+--- a/portfolio/content/projects.py
++++ b/portfolio/content/projects.py
+@@ -80,4 +80,40 @@ PROJECTS = [
+             "Limitations": "Customer-level totals exclude ~25% of transactions with no linked CustomerID; only aggregated result tables are shipped with the dashboard, not the raw 44MB source file.",
+         },
+     },
++    {
++        "slug": "weather-forecast-data-platform",
++        "title": "Weather Forecast Data Platform",
++        "short_description": (
++            "Daily ELT pipeline for Egyptian cities using the Open-Meteo API, "
++            "PostgreSQL upserts, dbt models, Docker, and Apache Airflow."
++        ),
++        "full_description": (
++            "Fetches hourly weather forecasts, saves raw JSON, validates units, "
++            "upserts city-hour records, and builds Cairo-local daily marts."
++        ),
++        "category": "Data Engineering",
++        "year": "2026",
++        "status": "Implemented",
++        "featured": True,
++        "technologies": ["Python", "Airflow", "PostgreSQL", "dbt", "Docker", "AWS"],
++        "key_metric": "2 cities | 14-day forecast horizon",
++        "cover_image": "",
++        "demo_url": "/weather_pipeline",
++        "demo_label": "View Case Study",
++        "repository_url": "https://github.com/peteratef-eng/weather-forecast-data-platform",
++        "case_study_page": "views/weather_pipeline.py",
++        "case_study_route": "",
++        "dashboard_page": "",
++        "sort_order": 0,
++        "case_study_sections": {
++            "Business problem": (
++                "Weather forecasts change daily. Scheduled ingestion needs safe reruns, "
++                "visible failures, and consistent timestamps."
++            ),
++            "Project summary": (
++                "Open-Meteo API -> raw JSON -> validated PostgreSQL upserts -> "
++                "dbt staging and daily marts, orchestrated with Airflow."
++            ),
++        },
++    },
+ ]
+diff --git a/tests/test_portfolio_project_navigation.py b/tests/test_portfolio_project_navigation.py
+new file mode 100644
+index 0000000..10aedb0
+--- /dev/null
++++ b/tests/test_portfolio_project_navigation.py
+@@ -0,0 +1,49 @@
++from __future__ import annotations
++
++import unittest
++from pathlib import Path
++
++from portfolio.content.projects import PROJECTS
++from ui.navigation import SIDEBAR_PROJECTS, route_href
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++class PortfolioProjectNavigationTest(unittest.TestCase):
++    def test_weather_is_first_featured_project(self) -> None:
++        featured = sorted(
++            (project for project in PROJECTS if project.get("featured")),
++            key=lambda project: project.get("sort_order", 999),
++        )
++        self.assertEqual(featured[0]["slug"], "weather-forecast-data-platform")
++
++    def test_weather_case_study_route_is_registered(self) -> None:
++        weather = next(project for project in PROJECTS if project["slug"] == "weather-forecast-data-platform")
++        page = SIDEBAR_PROJECTS[0]["pages"][0]
++        self.assertEqual(page["path"], weather["case_study_page"])
++        self.assertEqual(page["route"], weather["demo_url"])
++        self.assertEqual(route_href(page["route"]), "./weather_pipeline")
++        self.assertTrue((ROOT / page["path"]).is_file())
++        self.assertEqual(weather["demo_label"], "View Case Study")
++        self.assertEqual(weather["case_study_route"], "")
++
++    def test_job_market_selection_does_not_depend_on_order(self) -> None:
++        for name in ("about", "project_overview"):
++            with self.subTest(view=name):
++                source = (ROOT / "views" / f"{name}.py").read_text()
++                self.assertNotIn("PROJECTS[0]", source)
++                self.assertIn('item["slug"] == "job-market-intelligence"', source)
++        project = next(item for item in reversed(PROJECTS) if item["slug"] == "job-market-intelligence")
++        self.assertTrue(project["repository_url"].endswith("/job-market-data-engineering"))
++
++    def test_routes_are_unique_and_views_exist(self) -> None:
++        pages = [page for project in SIDEBAR_PROJECTS for page in project["pages"]]
++        routes = [page["url_path"] for page in pages]
++        self.assertEqual(len(routes), len(set(routes)))
++        for page in pages:
++            with self.subTest(page=page["path"]):
++                self.assertTrue((ROOT / page["path"]).is_file())
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/ui/components.py b/ui/components.py
+index 0bfc65b..709a4db 100644
+--- a/ui/components.py
++++ b/ui/components.py
+@@ -253,13 +253,14 @@ def kpi_grid(values: dict[str, str]) -> None:
+ 
+ 
+ def pipeline_visual(class_name: str = "") -> None:
++    st.caption("Job Market warehouse workflow. Airflow is planned; the hosted dashboard uses a separate CSV sample path shown below.")
+     steps = [
+         ("01", "DATA SOURCES", "Raw CSV Files", "Source tables", "source", "M5 4h10l2 2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4z M9 12h6 M9 16h6"),
+         ("02", "INGEST & PREPARE", "Python / Pandas", "Load, clean, sample", "process", "M8 9l-4 3 4 3 M16 9l4 3-4 3 M14 5l-4 14"),
+         ("03", "DATA WAREHOUSE", "PostgreSQL", "Relational storage", "warehouse", "M5 7c0-2 3.1-4 7-4s7 2 7 4-3.1 4-7 4-7-2-7-4z M5 7v10c0 2 3.1 4 7 4s7-2 7-4V7 M5 12c0 2 3.1 4 7 4s7-2 7-4"),
+         ("04", "TRANSFORM & MODEL", "dbt", "Staging -> marts", "transform", "M12 3l8 4-8 4-8-4 8-4z M4 12l8 4 8-4 M4 17l8 4 8-4"),
+         ("05", "VALIDATE", "dbt Tests + SQL Checks", "Integrity checks", "validate", "M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z M9 12l2 2 4-5"),
+-        ("06", "SERVE & EXPLORE", "Streamlit Dashboard", "Interactive insights", "serve", "M4 19V5h16v14H4z M8 15l3-3 2 2 3-5 M8 19v-2 M12 19v-3 M16 19v-6"),
++        ("06", "QUERY & EXPLORE", "SQL Analytics", "Query warehouse marts", "serve", "M4 19V5h16v14H4z M8 15l3-3 2 2 3-5 M8 19v-2 M12 19v-3 M16 19v-6"),
+     ]
+     step_classes = " ".join(["pipeline-architecture-card", class_name]).strip()
+     tabindex = ' tabindex="0"' if class_name else ""
+@@ -282,18 +283,18 @@ def pipeline_visual(class_name: str = "") -> None:
+     )
+     st.markdown(
+         (
+-            '<div class="pipeline-architecture-shell" aria-label="Data engineering architecture from source files to dashboard">'
++            '<div class="pipeline-architecture-shell" aria-label="Job Market warehouse workflow, separate from hosted dashboard data">'
+             '<div class="pipeline-architecture-viewport">'
+             '<div class="pipeline pipeline-architecture" role="list">'
+-            '<section class="pipeline-orchestration-band" aria-label="Apache Airflow orchestration layer">'
++            '<section class="pipeline-orchestration-band" aria-label="Planned Apache Airflow orchestration, not implemented for Job Market">'
+             '<div class="pipeline-orchestration-main">'
+             '<span class="pipeline-orchestration-icon" aria-hidden="true">'
+             '<svg viewBox="0 0 24 24"><path d="M4 7h5m6 0h5M9 7a3 3 0 1 0 6 0 3 3 0 0 0-6 0z M6 17h12M8 14l-2 3 2 3M16 14l2 3-2 3"></path></svg>'
+             '</span>'
+-            '<span><small>ORCHESTRATION LAYER</small><strong>Apache Airflow</strong><em>Schedules and coordinates pipeline tasks</em></span>'
++            '<span><small>PLANNED ORCHESTRATION</small><strong>Apache Airflow (Planned)</strong><em>No Job Market DAG is implemented</em></span>'
+             '</div>'
+             '<div class="pipeline-orchestration-status">'
+-            '<span>Scheduled DAG</span><span>Task dependencies</span><span>Monitoring &amp; retries</span>'
++            '<span>Future DAG</span><span>Future dependencies</span><span>Future retries</span>'
+             '</div>'
+             '<span class="pipeline-airflow-stem pipeline-airflow-stem-2" aria-hidden="true"></span>'
+             '<span class="pipeline-airflow-stem pipeline-airflow-stem-4" aria-hidden="true"></span>'
+@@ -303,7 +304,7 @@ def pipeline_visual(class_name: str = "") -> None:
+             '<div class="pipeline-stage-grid">'
+             f'{markup}'
+             '</div>'
+-            '<div class="data-flow-lane" aria-label="Data flows from source files to the Streamlit dashboard">'
++            '<div class="data-flow-lane" aria-label="Warehouse data flows from source files to SQL analytics">'
+             '<svg class="data-flow-svg" aria-hidden="true">'
+             '<defs><marker id="pipelineDataArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L8,4 L0,8 Z"></path></marker><filter id="pipelinePulseGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="2" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>'
+             '<path id="pipelineDataFlowPath" class="data-flow-path" d="M98 26 H1083"></path>'
+@@ -440,7 +441,7 @@ def _project_pipeline_visual() -> str:
+         ("etl", "Python ETL", "Pandas", "M12 3v18 M5 8h14 M5 16h14"),
+         ("warehouse project-warehouse-stage", "PostgreSQL", "Warehouse", "M6 6c0-1.7 12-1.7 12 0v12c0 1.7-12 1.7-12 0V6z M6 6c0 1.7 12 1.7 12 0 M6 12c0 1.7 12 1.7 12 0"),
+         ("marts", "dbt Marts", "Analytics", "M5 18V8l7-4 7 4v10 M9 18v-6h6v6"),
+-        ("dashboard", "Dashboard", "Streamlit", "M4 5h16v12H4z M8 21h8 M12 17v4"),
++        ("dashboard", "SQL Insights", "Warehouse", "M4 5h16v12H4z M8 21h8 M12 17v4"),
+     ]
+     stage_markup = []
+     for index, (class_name, label, detail, icon_path) in enumerate(stages, start=1):
+@@ -464,7 +465,7 @@ def _project_pipeline_visual() -> str:
+     )
+     return (
+         '<div class="project-visual project-pipeline-banner" '
+-        'aria-label="Data pipeline from raw data through Python ETL, PostgreSQL, dbt marts, and dashboard">'
++        'aria-label="Warehouse workflow from raw data through Python ETL, PostgreSQL and dbt marts to SQL insights">'
+         '<div class="project-pipeline-track">'
+         f'{particles}'
+         f'{"".join(stage_markup)}'
+@@ -479,6 +480,7 @@ def project_card(project: dict, *, actions: bool = False, featured: bool = False
+     )
+     action_markup = ""
+     if actions:
++        demo_label = html.escape(project.get("demo_label", "Live Demo"))
+         demo_url = project.get("demo_url") or "/market_dashboard"
+         repository_url = project.get("repository_url", "")
+         repository_link = (
+@@ -498,7 +500,7 @@ def project_card(project: dict, *, actions: bool = False, featured: bool = False
+         action_markup = (
+             '<div class="project-actions">'
+             f'{case_study_link}'
+-            f'<a class="{demo_class}" href="{html.escape(demo_href)}"{demo_target_attr}>Live Demo</a>'
++            f'<a class="{demo_class}" href="{html.escape(demo_href)}"{demo_target_attr}>{demo_label}</a>'
+             f'{repository_link}'
+             '</div>'
+         )
+diff --git a/ui/navigation.py b/ui/navigation.py
+index 41a4c92..427c9ea 100644
+--- a/ui/navigation.py
++++ b/ui/navigation.py
+@@ -15,6 +15,19 @@ PORTFOLIO_PAGES = [
+ ]
+ 
+ SIDEBAR_PROJECTS = [
++    {
++        "name": "Weather Forecast Data Platform",
++        "type": "Data Engineering",
++        "icon": "pipeline",
++        "pages": [
++            {
++                "label": "Overview",
++                "path": "views/weather_pipeline.py",
++                "route": "/weather_pipeline",
++                "url_path": "weather_pipeline",
++            },
++        ],
++    },
+     {
+         "name": "Job Market Intelligence",
+         "type": "Data Engineering",
+diff --git a/views/about.py b/views/about.py
+index da4eaf3..ab9ebbe 100644
+--- a/views/about.py
++++ b/views/about.py
+@@ -9,7 +9,7 @@ from ui.components import section_card
+ 
+ st.title("About Me")
+ metadata = load_dashboard_metadata()
+-project = PROJECTS[0]
++project = next(item for item in PROJECTS if item["slug"] == "job-market-intelligence")
+ 
+ cols = st.columns(2)
+ with cols[0]:
+diff --git a/views/data_pipeline.py b/views/data_pipeline.py
+index 31b044b..026634a 100644
+--- a/views/data_pipeline.py
++++ b/views/data_pipeline.py
+@@ -28,15 +28,15 @@ pipeline_info = [
+         "PROCESSING",
+         "Engineering workflow",
+         (
+-            f"{sample_rows:,}-posting hosted sample with {skills_rows:,} job-skill relationships. Python/Pandas, PostgreSQL, and dbt prepare the analytics layer."
++            f"{sample_rows:,}-posting hosted sample with {skills_rows:,} job-skill relationships. The hosted sample is prepared directly from raw CSVs with Python/Pandas, not exported from dbt marts."
+             if sample_rows and skills_rows
+-            else "Python/Pandas, PostgreSQL, and dbt prepare the hosted analytics layer."
++            else "The hosted sample is prepared directly from raw CSVs with Python/Pandas, not exported from dbt marts."
+         ),
+     ),
+     (
+         "OUTPUTS",
+         "Analytics delivery",
+-        "Tested analytics marts power an interactive Streamlit dashboard with recruiter-ready market insights.",
++        "The Streamlit dashboard reads sample CSVs. The separate PostgreSQL/dbt warehouse workflow builds analytics marts for SQL analysis.",
+     ),
+ ]
+ pipeline_info_markup = "".join(
+@@ -55,3 +55,11 @@ pipeline_info_markup = "".join(
+     for index, (title, label, body) in enumerate(pipeline_info, start=1)
+ )
+ st.markdown(f'<section class="pipeline-info-grid">{pipeline_info_markup}</section>', unsafe_allow_html=True)
++
++
++st.subheader("Two separate data paths")
++st.markdown("**Warehouse project:** PostgreSQL and dbt build staging, intermediate and mart models for SQL analysis. Airflow orchestration is a planned next step for Job Market, not an implemented DAG.")
++st.code("Raw source data -> PostgreSQL -> dbt staging -> intermediate -> marts -> SQL analysis", language="text")
++st.markdown("**Hosted dashboard:** the sample preparation script reads raw CSVs directly and writes dashboard CSVs plus metadata. The dashboard loader reads those files; it does not query PostgreSQL or read dbt mart exports.")
++st.code("Raw CSVs -> scripts/prepare_dashboard_data.py -> data/dashboard/*.csv + metadata.json\n         -> dashboard/data_loader.py -> Pandas filters -> Streamlit / Plotly", language="text")
++st.info("The dbt marts and hosted dashboard are not connected by an export step. The Weather project has its own implemented Airflow DAG, shown in its separate case study.")
+diff --git a/views/home.py b/views/home.py
+index ad35805..9135497 100644
+--- a/views/home.py
++++ b/views/home.py
+@@ -94,7 +94,7 @@ resume_href = asset_data_uri(str(RESUME_PATH), "application/pdf")
+ resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume_href else ""
+ resume_link = resume_href or html.escape(PROFILE["resume_path"])
+ contact_href = route_href("/contact")
+-project_overview_href = route_href("/project_overview")
++project_overview_href = route_href("/weather_pipeline")
+ hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
+ stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
+ hero_photo_markup = (
+@@ -242,6 +242,7 @@ for featured_project in featured_projects:
+         else '<div class="featured-preview-fallback">Project preview</div>'
+     )
+     demo_href = route_href(featured_project.get("demo_url") or "/projects")
++    demo_label = html.escape(featured_project.get("demo_label", "VIEW LIVE PROJECT"))
+ 
+     featured_project_markup = (
+         dedent(
+@@ -257,7 +258,7 @@ for featured_project in featured_projects:
+                         <span>{metric_label}</span>
+                     </div>
+                     <div class="hero-actions">
+-                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">VIEW LIVE PROJECT</a>
++                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">{demo_label}</a>
+                         {repository_button}
+                     </div>
+                 </div>
+diff --git a/views/project_overview.py b/views/project_overview.py
+index 9298439..83fa845 100644
+--- a/views/project_overview.py
++++ b/views/project_overview.py
+@@ -12,7 +12,7 @@ from ui.theme import current_theme
+ 
+ theme = current_theme()
+ 
+-project = PROJECTS[0]
++project = next(item for item in PROJECTS if item["slug"] == "job-market-intelligence")
+ data_pipeline_href = route_href("/data_pipeline")
+ market_dashboard_href = route_href("/market_dashboard")
+ 
+diff --git a/views/weather_pipeline.py b/views/weather_pipeline.py
+new file mode 100644
+index 0000000..5b7d4e0
+--- /dev/null
++++ b/views/weather_pipeline.py
+@@ -0,0 +1,55 @@
++from pathlib import Path
++
++import streamlit as st
++
++from portfolio.content.projects import PROJECTS
++
++project = next(
++    item for item in PROJECTS
++    if item["slug"] == "weather-forecast-data-platform"
++)
++
++st.title(project["title"])
++st.write(project["short_description"])
++st.caption("Case study of the repository implementation, not a live pipeline-status monitor.")
++st.link_button("View source on GitHub", project["repository_url"])
++
++col1, col2 = st.columns(2)
++col1.metric("Configured cities", "2")
++col2.metric("Forecast horizon", "14 days")
++st.caption("Expected response size: 336 hourly rows per city for a full 14-day forecast.")
++
++st.subheader("Architecture")
++st.code(
++    "Open-Meteo API -> raw JSON -> PostgreSQL upsert\n"
++    "                            -> dbt staging -> daily mart -> dbt tests\n"
++    "Airflow: run_main_py -> run_dbt_run -> run_dbt_test",
++    language="text",
++)
++
++image_path = Path(__file__).resolve().parents[1] / "assets/projects/weather-pipeline.png"
++if image_path.exists():
++    st.image(str(image_path), caption="Weather pipeline DAG")
++
++st.subheader("Engineering decisions")
++for item in [
++    "Upsert on (city, time) refreshes revised forecasts without creating duplicate keys.",
++    "Raw API JSON is saved before unit validation and database loading.",
++    "Request timeouts and Airflow retries make transient API failures visible and retryable.",
++    "UTC source timestamps are kept, with Africa/Cairo conversion in dbt staging.",
++    "The daily mart exposes hours_count so partial days are visible.",
++]:
++    st.write(f"- {item}")
++
++st.subheader("Deployment and failure testing")
++st.write(
++    "The repository documents Docker Compose on AWS EC2, scheduled instance start/stop, "
++    "and a deliberate database-outage test of the failure email callback. "
++    "See the README for screenshots and deployment details."
++)
++
++st.subheader("Next improvements")
++st.write(
++    "Ingestion unit tests and CI, ingestion timestamps and freshness checks, "
++    "air-quality ingestion, and raw JSON storage in S3."
++)

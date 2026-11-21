@@ -253,13 +253,14 @@ def kpi_grid(values: dict[str, str]) -> None:
 
 
 def pipeline_visual(class_name: str = "") -> None:
+    st.caption("Job Market warehouse workflow. Airflow is planned; the hosted dashboard uses a separate CSV sample path shown below.")
     steps = [
         ("01", "DATA SOURCES", "Raw CSV Files", "Source tables", "source", "M5 4h10l2 2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4z M9 12h6 M9 16h6"),
         ("02", "INGEST & PREPARE", "Python / Pandas", "Load, clean, sample", "process", "M8 9l-4 3 4 3 M16 9l4 3-4 3 M14 5l-4 14"),
         ("03", "DATA WAREHOUSE", "PostgreSQL", "Relational storage", "warehouse", "M5 7c0-2 3.1-4 7-4s7 2 7 4-3.1 4-7 4-7-2-7-4z M5 7v10c0 2 3.1 4 7 4s7-2 7-4V7 M5 12c0 2 3.1 4 7 4s7-2 7-4"),
         ("04", "TRANSFORM & MODEL", "dbt", "Staging -> marts", "transform", "M12 3l8 4-8 4-8-4 8-4z M4 12l8 4 8-4 M4 17l8 4 8-4"),
         ("05", "VALIDATE", "dbt Tests + SQL Checks", "Integrity checks", "validate", "M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z M9 12l2 2 4-5"),
-        ("06", "SERVE & EXPLORE", "Streamlit Dashboard", "Interactive insights", "serve", "M4 19V5h16v14H4z M8 15l3-3 2 2 3-5 M8 19v-2 M12 19v-3 M16 19v-6"),
+        ("06", "QUERY & EXPLORE", "SQL Analytics", "Query warehouse marts", "serve", "M4 19V5h16v14H4z M8 15l3-3 2 2 3-5 M8 19v-2 M12 19v-3 M16 19v-6"),
     ]
     step_classes = " ".join(["pipeline-architecture-card", class_name]).strip()
     tabindex = ' tabindex="0"' if class_name else ""
@@ -282,18 +283,18 @@ def pipeline_visual(class_name: str = "") -> None:
     )
     st.markdown(
         (
-            '<div class="pipeline-architecture-shell" aria-label="Data engineering architecture from source files to dashboard">'
+            '<div class="pipeline-architecture-shell" aria-label="Job Market warehouse workflow, separate from hosted dashboard data">'
             '<div class="pipeline-architecture-viewport">'
             '<div class="pipeline pipeline-architecture" role="list">'
-            '<section class="pipeline-orchestration-band" aria-label="Apache Airflow orchestration layer">'
+            '<section class="pipeline-orchestration-band" aria-label="Planned Apache Airflow orchestration, not implemented for Job Market">'
             '<div class="pipeline-orchestration-main">'
             '<span class="pipeline-orchestration-icon" aria-hidden="true">'
             '<svg viewBox="0 0 24 24"><path d="M4 7h5m6 0h5M9 7a3 3 0 1 0 6 0 3 3 0 0 0-6 0z M6 17h12M8 14l-2 3 2 3M16 14l2 3-2 3"></path></svg>'
             '</span>'
-            '<span><small>ORCHESTRATION LAYER</small><strong>Apache Airflow</strong><em>Schedules and coordinates pipeline tasks</em></span>'
+            '<span><small>PLANNED ORCHESTRATION</small><strong>Apache Airflow (Planned)</strong><em>No Job Market DAG is implemented</em></span>'
             '</div>'
             '<div class="pipeline-orchestration-status">'
-            '<span>Scheduled DAG</span><span>Task dependencies</span><span>Monitoring &amp; retries</span>'
+            '<span>Future DAG</span><span>Future dependencies</span><span>Future retries</span>'
             '</div>'
             '<span class="pipeline-airflow-stem pipeline-airflow-stem-2" aria-hidden="true"></span>'
             '<span class="pipeline-airflow-stem pipeline-airflow-stem-4" aria-hidden="true"></span>'
@@ -303,7 +304,7 @@ def pipeline_visual(class_name: str = "") -> None:
             '<div class="pipeline-stage-grid">'
             f'{markup}'
             '</div>'
-            '<div class="data-flow-lane" aria-label="Data flows from source files to the Streamlit dashboard">'
+            '<div class="data-flow-lane" aria-label="Warehouse data flows from source files to SQL analytics">'
             '<svg class="data-flow-svg" aria-hidden="true">'
             '<defs><marker id="pipelineDataArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L8,4 L0,8 Z"></path></marker><filter id="pipelinePulseGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="2" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>'
             '<path id="pipelineDataFlowPath" class="data-flow-path" d="M98 26 H1083"></path>'
@@ -440,7 +441,7 @@ def _project_pipeline_visual() -> str:
         ("etl", "Python ETL", "Pandas", "M12 3v18 M5 8h14 M5 16h14"),
         ("warehouse project-warehouse-stage", "PostgreSQL", "Warehouse", "M6 6c0-1.7 12-1.7 12 0v12c0 1.7-12 1.7-12 0V6z M6 6c0 1.7 12 1.7 12 0 M6 12c0 1.7 12 1.7 12 0"),
         ("marts", "dbt Marts", "Analytics", "M5 18V8l7-4 7 4v10 M9 18v-6h6v6"),
-        ("dashboard", "Dashboard", "Streamlit", "M4 5h16v12H4z M8 21h8 M12 17v4"),
+        ("dashboard", "SQL Insights", "Warehouse", "M4 5h16v12H4z M8 21h8 M12 17v4"),
     ]
     stage_markup = []
     for index, (class_name, label, detail, icon_path) in enumerate(stages, start=1):
@@ -464,7 +465,7 @@ def _project_pipeline_visual() -> str:
     )
     return (
         '<div class="project-visual project-pipeline-banner" '
-        'aria-label="Data pipeline from raw data through Python ETL, PostgreSQL, dbt marts, and dashboard">'
+        'aria-label="Warehouse workflow from raw data through Python ETL, PostgreSQL and dbt marts to SQL insights">'
         '<div class="project-pipeline-track">'
         f'{particles}'
         f'{"".join(stage_markup)}'
@@ -479,6 +480,7 @@ def project_card(project: dict, *, actions: bool = False, featured: bool = False
     )
     action_markup = ""
     if actions:
+        demo_label = html.escape(project.get("demo_label", "Live Demo"))
         demo_url = project.get("demo_url") or "/market_dashboard"
         repository_url = project.get("repository_url", "")
         repository_link = (
@@ -498,7 +500,7 @@ def project_card(project: dict, *, actions: bool = False, featured: bool = False
         action_markup = (
             '<div class="project-actions">'
             f'{case_study_link}'
-            f'<a class="{demo_class}" href="{html.escape(demo_href)}"{demo_target_attr}>Live Demo</a>'
+            f'<a class="{demo_class}" href="{html.escape(demo_href)}"{demo_target_attr}>{demo_label}</a>'
             f'{repository_link}'
             '</div>'
         )

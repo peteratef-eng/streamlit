@@ -28,15 +28,15 @@ pipeline_info = [
         "PROCESSING",
         "Engineering workflow",
         (
-            f"{sample_rows:,}-posting hosted sample with {skills_rows:,} job-skill relationships. Python/Pandas, PostgreSQL, and dbt prepare the analytics layer."
+            f"{sample_rows:,}-posting hosted sample with {skills_rows:,} job-skill relationships. The hosted sample is prepared directly from raw CSVs with Python/Pandas, not exported from dbt marts."
             if sample_rows and skills_rows
-            else "Python/Pandas, PostgreSQL, and dbt prepare the hosted analytics layer."
+            else "The hosted sample is prepared directly from raw CSVs with Python/Pandas, not exported from dbt marts."
         ),
     ),
     (
         "OUTPUTS",
         "Analytics delivery",
-        "Tested analytics marts power an interactive Streamlit dashboard with recruiter-ready market insights.",
+        "The Streamlit dashboard reads sample CSVs. The separate PostgreSQL/dbt warehouse workflow builds analytics marts for SQL analysis.",
     ),
 ]
 pipeline_info_markup = "".join(
@@ -55,3 +55,11 @@ pipeline_info_markup = "".join(
     for index, (title, label, body) in enumerate(pipeline_info, start=1)
 )
 st.markdown(f'<section class="pipeline-info-grid">{pipeline_info_markup}</section>', unsafe_allow_html=True)
+
+
+st.subheader("Two separate data paths")
+st.markdown("**Warehouse project:** PostgreSQL and dbt build staging, intermediate and mart models for SQL analysis. Airflow orchestration is a planned next step for Job Market, not an implemented DAG.")
+st.code("Raw source data -> PostgreSQL -> dbt staging -> intermediate -> marts -> SQL analysis", language="text")
+st.markdown("**Hosted dashboard:** the sample preparation script reads raw CSVs directly and writes dashboard CSVs plus metadata. The dashboard loader reads those files; it does not query PostgreSQL or read dbt mart exports.")
+st.code("Raw CSVs -> scripts/prepare_dashboard_data.py -> data/dashboard/*.csv + metadata.json\n         -> dashboard/data_loader.py -> Pandas filters -> Streamlit / Plotly", language="text")
+st.info("The dbt marts and hosted dashboard are not connected by an export step. The Weather project has its own implemented Airflow DAG, shown in its separate case study.")

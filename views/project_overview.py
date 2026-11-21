@@ -12,7 +12,7 @@ from ui.theme import current_theme
 
 theme = current_theme()
 
-project = PROJECTS[0]
+project = next(item for item in PROJECTS if item["slug"] == "job-market-intelligence")
 data_pipeline_href = route_href("/data_pipeline")
 market_dashboard_href = route_href("/market_dashboard")
 

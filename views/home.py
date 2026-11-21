@@ -94,7 +94,7 @@ resume_href = asset_data_uri(str(RESUME_PATH), "application/pdf")
 resume_attr = ' download="Peter_Atef_Resume_2026.pdf"' if resume_href else ""
 resume_link = resume_href or html.escape(PROFILE["resume_path"])
 contact_href = route_href("/contact")
-project_overview_href = route_href("/project_overview")
+project_overview_href = route_href("/weather_pipeline")
 hero_photo_src = asset_data_uri(str(HERO_PHOTO_PATH), "image/jpeg")
 stack_chips = "".join(f"<span>{html.escape(item)}</span>" for item in ("Python", "SQL", "PostgreSQL", "dbt"))
 hero_photo_markup = (
@@ -242,6 +242,7 @@ for featured_project in featured_projects:
         else '<div class="featured-preview-fallback">Project preview</div>'
     )
     demo_href = route_href(featured_project.get("demo_url") or "/projects")
+    demo_label = html.escape(featured_project.get("demo_label", "VIEW LIVE PROJECT"))
 
     featured_project_markup = (
         dedent(
@@ -257,7 +258,7 @@ for featured_project in featured_projects:
                         <span>{metric_label}</span>
                     </div>
                     <div class="hero-actions">
-                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">VIEW LIVE PROJECT</a>
+                        <a class="portfolio-button portfolio-button-primary" href="{demo_href}" target="_self">{demo_label}</a>
                         {repository_button}
                     </div>
                 </div>
