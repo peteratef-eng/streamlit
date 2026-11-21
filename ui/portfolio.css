@@ -392,5 +392,17 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent) !import
 [data-testid="stMultiSelect"] [data-tag] span,
 [data-testid="stMultiSelect"] [data-tag] button { color: var(--tag-text) !important; }
 /* Filled mint actions need dark text, not the light link foreground. */
-.wx-hero a.pa-button:not(.pa-button-secondary),
-a.pa-button:not(.pa-button-secondary):not(.pa-project-actions .pa-button) { color: #0F172A !important; }
+/* Filled and outlined variants have explicit, separate foregrounds. */
+a.pa-button-copper { background: #78E1CD !important; color: #0F172A !important; }
+a.pa-button-outline { background: #142036 !important; color: #DCE9F7 !important; border-color: #47637E !important; }
+a.pa-button-outline:hover { background: #20344B !important; color: #A2F0DF !important; }
+a.pa-button-copper:hover { background: #A2F0DF !important; color: #0F172A !important; }
+
+/* Readable figure notes and supporting case-study text at every width. */
+[data-testid="stImageCaption"], [data-testid="stImageCaption"] p,
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {
+    color: #B2C2D8 !important; font-size: 13px !important; line-height: 1.65 !important;
+}
+.wx-pipeline p { font-size: 14px !important; color: #B2C2D8 !important; }
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stSidebarCollapseButton"] button * { color: #C5D3E6 !important; }
