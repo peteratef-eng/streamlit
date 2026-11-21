@@ -13,7 +13,6 @@ from ui.project_cards import project_card_html
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@st.cache_data(show_spinner=False)
 def asset_data_uri(path_value: str, mime_type: str) -> str:
     path = Path(path_value)
     if not path.is_file():

@@ -9,7 +9,6 @@ import streamlit as st
 from portfolio.content.profile import PROFILE
 
 
-@st.cache_data(show_spinner=False)
 def resume_data_uri(path_value: str) -> str:
     resume_file = Path(path_value)
     if not resume_file.exists():
